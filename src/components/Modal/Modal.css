@@ -1,0 +1,202 @@
+/* ─── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --modal-bg:             var(--color-bg-raised);       /* light: #ffffff,  dark: #1e242c */
+  --modal-radius:         16px;
+  --modal-padding:        24px;
+  --modal-width:          560px;
+  --modal-min-width:      384px;
+  --modal-max-width:      776px;
+  --modal-gap:            24px;
+  --modal-shadow:
+    0px 112px   228px    0px rgba(55, 73, 81, 0.12),
+    0px 25.017px 50.927px 0px rgba(55, 73, 81, 0.07),
+    0px 7.448px  15.162px 0px rgba(55, 73, 81, 0.05);
+  --modal-overlay-bg:     hsla(0, 0%, 0%, 0.5);
+  --modal-overlay-blur:   16px;
+  --modal-close-color:    var(--color-text-secondary);  /* light: #576579,  dark: #e7eaee */
+  --modal-close-hover-bg: var(--color-bg-page);         /* light: #f3f4f6,  dark: #313945 */
+
+  /* timing */
+  --modal-emerge-dur:  240ms;
+  --modal-recede-dur:  160ms;
+  --modal-overlay-dur: 200ms;
+
+  /* easing (shared tokens) */
+  --modal-ease-emerge:    cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --modal-ease-recede:    cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --modal-ease-standard:  cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --modal-ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1.0);
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+/* Overlay — opacity + blur build in together */
+@keyframes modal-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0px);  -webkit-backdrop-filter: blur(0px);  }
+  to   { opacity: 1; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+}
+
+@keyframes modal-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  to   { opacity: 0; backdrop-filter: blur(0px);  -webkit-backdrop-filter: blur(0px);  }
+}
+
+/* Card — fade + gentle slide up on enter, reversed on exit */
+@keyframes modal-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes modal-card-out {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(10px); }
+}
+
+/* ─── Overlay ────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--modal-overlay-bg);
+  -webkit-backdrop-filter: blur(var(--modal-overlay-blur));
+          backdrop-filter: blur(var(--modal-overlay-blur));
+}
+
+.modal-overlay--visible {
+  animation: modal-overlay-in var(--modal-overlay-dur) var(--modal-ease-emerge) both;
+}
+
+.modal-overlay--exiting {
+  animation: modal-overlay-out var(--modal-recede-dur) var(--modal-ease-recede) both;
+}
+
+/* ─── Card ───────────────────────────────────────────────────────────────────── */
+.modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--modal-gap);
+  width: var(--modal-width);
+  min-width: var(--modal-min-width);
+  max-width: var(--modal-max-width);
+  padding: var(--modal-padding);
+  background: var(--modal-bg);
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-shadow);
+}
+
+.modal--visible {
+  animation: modal-card-in var(--modal-emerge-dur) var(--modal-ease-emerge) both;
+}
+
+.modal--exiting {
+  animation: modal-card-out var(--modal-recede-dur) var(--modal-ease-recede) both;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+.modal__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* leave room so text doesn't run under the close button */
+  padding-right: 16px;
+}
+
+.modal__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.modal__title {
+  max-width:   480px;
+  color:       var(--color-text-primary);
+  margin:      0;
+}
+
+/* h6 scale — matches Typography variant="h6" weight="bold" */
+.modal__title--h6 {
+  font-family:    var(--font-text);
+  font-size:      var(--text-h6-size);
+  font-weight:    var(--font-weight-bold);
+  line-height:    var(--text-h6-line-height);
+  letter-spacing: var(--text-h6-tracking-bold);
+}
+
+.modal__description {
+  font-family:    var(--font-text);
+  font-size:      16px;
+  font-weight:    var(--font-weight-regular);
+  line-height:    24px;
+  letter-spacing: 0;
+  color:          var(--color-text-secondary);
+  margin:         0;
+}
+
+/* ─── Image slot ─────────────────────────────────────────────────────────────── */
+.modal__image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ─── Close button ───────────────────────────────────────────────────────────── */
+.modal__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--modal-close-color);
+  cursor: pointer;
+  transition:
+    background 140ms var(--modal-ease-standard),
+    color      140ms var(--modal-ease-standard);
+}
+
+.modal__close:hover {
+  background: var(--modal-close-hover-bg);
+}
+
+.modal__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ─── Additional capabilities slot ──────────────────────────────────────────── */
+.modal__capabilities {
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────────── */
+.modal__footer {
+  display: flex;
+  align-items: center;
+}
+
+.modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}

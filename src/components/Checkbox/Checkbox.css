@@ -1,0 +1,166 @@
+/* ── Design tokens ───────────────────────────────────────────────────────────── */
+:root {
+  /* Checkbox palette — references primitive tokens so dark mode adapts automatically */
+  --cb-border-default:  var(--color-spirits-600);    /* grey ring — flips to light in dark */
+  --cb-border-hover:    var(--color-blue-duck-500);  /* blue hover ring                    */
+  --cb-border-focus:    var(--color-blue-duck-800);  /* inner ring on filled hover          */
+  --cb-fill:            var(--color-blue-duck-500);  /* checked / partial background        */
+  --cb-icon:            #ffffff;
+  --cb-text:            var(--color-text-primary);   /* spirits-900 light / spirits-50 dark */
+
+  /* Sizing */
+  --cb-size:   16px;
+  --cb-radius: 4px;
+  --cb-border-w: 1.3px;
+  --cb-gap:    8px;
+
+  /* Durations */
+  --cb-dur-box:      150ms;
+  --cb-dur-check-in: 220ms;
+  --cb-dur-check-out: 110ms;
+  --cb-dur-dash-in:  180ms;
+  --cb-dur-dash-out: 110ms;
+  --cb-dur-press:     50ms;
+
+  /* Easing */
+  --cb-ease-emerge:   cubic-bezier(0.0, 0.0, 0.2, 1.0);  /* decelerate in  */
+  --cb-ease-recede:   cubic-bezier(0.4, 0.0, 1.0, 1.0);  /* accelerate out */
+  --cb-ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1.0);  /* colour / border */
+}
+
+/* ── Root wrapper ────────────────────────────────────────────────────────────── */
+.cb {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--cb-gap);
+  padding:     0;
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  user-select:         none;
+  -webkit-user-select: none;
+}
+
+.cb:focus-visible { outline: none; }
+
+.cb--disabled {
+  opacity:        0.4;
+  cursor:         not-allowed;
+  pointer-events: none;
+}
+
+/* ── Box ─────────────────────────────────────────────────────────────────────── */
+.cb__box {
+  position:         relative;
+  flex-shrink:      0;
+  width:            var(--cb-size);
+  height:           var(--cb-size);
+  border-radius:    var(--cb-radius);
+  background-color: transparent;
+  border:           var(--cb-border-w) solid var(--cb-border-default);
+  overflow:         hidden;
+  transition:
+    background-color var(--cb-dur-box)   var(--cb-ease-emerge),
+    border-color     var(--cb-dur-box)   var(--cb-ease-standard),
+    transform        var(--cb-dur-press) var(--cb-ease-recede);
+}
+
+/* Filled — checked or indeterminate */
+.cb__box--filled {
+  background-color: var(--cb-fill);
+  border-color:     transparent;
+}
+
+/* Hover on unchecked — border shifts to blue */
+.cb:hover:not(.cb--disabled) .cb__box:not(.cb__box--filled) {
+  border-color: var(--cb-border-hover);
+}
+
+/* Hover on filled — dark inner ring for depth */
+.cb:hover:not(.cb--disabled) .cb__box--filled {
+  border-color: var(--cb-border-focus);
+}
+
+/* Keyboard focus ring */
+.cb:focus-visible .cb__box {
+  outline:        2px solid var(--cb-border-hover);
+  outline-offset: 2px;
+}
+
+/* Press — box springs inward */
+.cb:active:not(.cb--disabled) .cb__box {
+  transform: scale(0.88);
+  transition:
+    background-color var(--cb-dur-box)   var(--cb-ease-emerge),
+    border-color     var(--cb-dur-box)   var(--cb-ease-standard),
+    transform        var(--cb-dur-press) var(--cb-ease-recede);
+}
+
+/* ── Icon base ───────────────────────────────────────────────────────────────── */
+.cb__icon {
+  position: absolute;
+  inset:    0;
+  width:    100%;
+  height:   100%;
+}
+
+/* ── Checkmark ───────────────────────────────────────────────────────────────── */
+/*
+ * The path length for M3.5 8.5 L6 11.25 L12.5 4.75 ≈ 12.9 SVG units.
+ * stroke-dashoffset drives the "draw on / erase" animation without any
+ * JS phase tracking — just CSS transition direction flipping per state.
+ */
+
+/* Default / exit state — path fully hidden */
+.cb__check path {
+  stroke-dasharray:  14;
+  stroke-dashoffset: 14;
+  opacity:           0;
+  transition:
+    stroke-dashoffset var(--cb-dur-check-out) var(--cb-ease-recede),
+    opacity           var(--cb-dur-check-out) var(--cb-ease-recede);
+}
+
+/* Checked — path draws in */
+.cb__box--checked .cb__check path {
+  stroke-dashoffset: 0;
+  opacity:           1;
+  transition:
+    stroke-dashoffset var(--cb-dur-check-in) var(--cb-ease-emerge),
+    opacity           80ms                   var(--cb-ease-emerge);
+}
+
+/* ── Dash (indeterminate) ────────────────────────────────────────────────────── */
+/* Default / exit state — collapsed to a point at center */
+.cb__dash path {
+  transform-origin: center;
+  transform:        scaleX(0);
+  opacity:          0;
+  transition:
+    transform var(--cb-dur-dash-out) var(--cb-ease-recede),
+    opacity   var(--cb-dur-dash-out) var(--cb-ease-recede);
+}
+
+/* Partial — dash expands outward from the midpoint */
+.cb__box--partial .cb__dash path {
+  transform: scaleX(1);
+  opacity:   1;
+  transition:
+    transform var(--cb-dur-dash-in) var(--cb-ease-emerge),
+    opacity   80ms                  var(--cb-ease-emerge);
+}
+
+/* ── Label ───────────────────────────────────────────────────────────────────── */
+.cb__label {
+  font-family: "Helvetica Now MT Text", Helvetica, Arial, sans-serif;
+  font-size:   13px;
+  line-height: 16px;
+  font-weight: 400;
+  color:       var(--cb-text);
+  white-space: nowrap;
+}
+
+/* Checked or partial — label steps up to medium weight */
+.cb__label--medium {
+  font-weight: 500;
+}

@@ -1,0 +1,215 @@
+@import '../../tokens.css';
+
+/* ─── Tokens ──────────────────────────────────────────────────────────────── */
+:root {
+  --pgn-font:          var(--font-micro);
+  --pgn-font-size:     11px;
+  --pgn-line-height:   16px;
+  --pgn-pad-x:         var(--space-4);   /* 16px */
+  --pgn-pad-y:         var(--space-3);   /* 12px */
+
+  --pgn-drop-radius:   var(--radius-sm); /* 8px  — dropdown trigger   */
+  --pgn-menu-radius:   var(--radius-md); /* 12px — dropdown menu      */
+
+  --pgn-gap:           var(--space-2);   /* 8px  — between nav items  */
+  --pgn-drop-gap:      var(--space-2);   /* 8px  — size-control items */
+
+  --pgn-border-color:  var(--color-border-default);
+  --pgn-active-bg:     var(--color-primary);
+  --pgn-active-text:   var(--color-text-on-brand);
+  --pgn-open-border:   #a2b8f1;                      /* Blue Duck 300 — fixed, no dark-mode inversion */
+
+  --pgn-menu-shadow:
+    0px 7px 15px 0px rgba(55, 73, 81, 0.05),
+    0px 25px 51px 0px rgba(55, 73, 81, 0.07),
+    0px 112px 228px 0px rgba(55, 73, 81, 0.12);
+
+  --pgn-menu-duration: 120ms;
+}
+
+/* ─── Keyframes ───────────────────────────────────────────────────────────── */
+
+@keyframes pgn-menu-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes pgn-menu-out {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(4px); }
+}
+
+@keyframes pgn-chevron-open {
+  from { transform: rotate(0deg);    }
+  to   { transform: rotate(180deg);  }
+}
+
+@keyframes pgn-chevron-close {
+  from { transform: rotate(180deg);  }
+  to   { transform: rotate(0deg);    }
+}
+
+/* ─── Root container ─────────────────────────────────────────────────────── */
+
+.pagination {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         var(--pgn-pad-y) var(--pgn-pad-x);
+  font-family:     var(--pgn-font);
+  font-size:       var(--pgn-font-size);
+  line-height:     var(--pgn-line-height);
+}
+
+/* ─── Left: page-size control ────────────────────────────────────────────── */
+
+.pagination__size-control {
+  display:     flex;
+  align-items: center;
+  gap:         var(--pgn-drop-gap);
+}
+
+/* Anchor for the menu — keeps left edge flush with the trigger */
+.pagination__dropdown-wrap {
+  position: relative;
+}
+
+.pagination__label {
+  font-weight: var(--font-weight-regular);
+  color:       var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Dropdown trigger button */
+.pagination__dropdown {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             4px;
+  padding:         var(--space-2);  /* 8px */
+  background:      transparent;
+  border:          1px solid var(--pgn-border-color);
+  border-radius:   var(--pgn-drop-radius);
+  cursor:          pointer;
+  font-family:     var(--pgn-font);
+  font-size:       var(--pgn-font-size);
+  font-weight:     var(--font-weight-medium);
+  line-height:     var(--pgn-line-height);
+  color:           var(--color-text-primary);
+  transition:      border-color 150ms var(--ease-standard);
+}
+
+.pagination__dropdown:hover {
+  border-color: var(--color-text-muted);
+}
+
+.pagination__dropdown--open {
+  border-color: var(--pgn-open-border);
+}
+
+.pagination__dropdown-value {
+  min-width: 14px;
+  text-align: center;
+}
+
+/* Chevron inside dropdown */
+.pagination__chevron {
+  display:    block;
+  flex-shrink: 0;
+  transition: transform var(--pgn-menu-duration) var(--ease-standard);
+}
+
+.pagination__chevron--up {
+  transform: rotate(180deg);
+}
+
+/* ─── Dropdown menu ───────────────────────────────────────────────────────── */
+
+.pagination__menu {
+  position:      absolute;
+  bottom:        calc(100% + 4px);  /* opens upward above the trigger */
+  left:          0;
+  min-width:     56px;
+  background:    var(--color-bg-raised);
+  border:        1px solid var(--pgn-border-color);
+  border-radius: var(--pgn-menu-radius);
+  box-shadow:    var(--pgn-menu-shadow);
+  padding:       var(--space-2);  /* 8px */
+  display:       flex;
+  flex-direction: column;
+  gap:           var(--space-1);  /* 4px */
+  z-index:       100;
+  overflow:      clip;
+  transform-origin: bottom left;
+}
+
+.pagination__menu--open {
+  animation: pgn-menu-in var(--pgn-menu-duration) var(--ease-emerge) both;
+}
+
+.pagination__menu--closing {
+  animation: pgn-menu-out var(--pgn-menu-duration) var(--ease-recede) both;
+}
+
+/* Menu option buttons */
+.pagination__option {
+  display:       flex;
+  align-items:   center;
+  padding:       var(--space-2) var(--space-3);  /* 8px 12px */
+  border:        none;
+  border-radius: var(--radius-xs);
+  background:    transparent;
+  cursor:        pointer;
+  font-family:   var(--pgn-font);
+  font-size:     var(--pgn-font-size);
+  font-weight:   var(--font-weight-medium);
+  line-height:   var(--pgn-line-height);
+  color:         var(--color-text-primary);
+  text-align:    left;
+  white-space:   nowrap;
+  transition:    background 120ms var(--ease-standard);
+}
+
+.pagination__option:hover:not(.pagination__option--active) {
+  background: var(--color-bg-surface);
+}
+
+.pagination__option--active {
+  background: var(--pgn-active-bg);
+  color:      var(--pgn-active-text);
+  border-radius: var(--radius-xs);
+}
+
+/* ─── Right: page navigation ─────────────────────────────────────────────── */
+
+.pagination__nav {
+  display:     flex;
+  align-items: center;
+  gap:         var(--pgn-gap);
+}
+
+/* Arrow buttons: remove horizontal padding so the icon centers */
+.pagination__nav .btn:first-child,
+.pagination__nav .btn:last-child {
+  padding-left:  0;
+  padding-right: 0;
+  width: 32px;
+}
+
+/* Center the SVG within the icon span */
+.pagination__nav .btn__icon {
+  justify-content: center;
+}
+
+/* Ellipsis */
+.pagination__ellipsis {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           32px;
+  height:          32px;
+  font-family:     var(--pgn-font);
+  font-size:       var(--pgn-font-size);
+  color:           var(--color-text-muted);
+  user-select:     none;
+}

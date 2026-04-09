@@ -1,0 +1,398 @@
+/* ─── Tokens ──────────────────────────────────────────────────────────────── */
+:root {
+  --tooltip-bg:              #1e242c;
+  --tooltip-color:           #ffffff;
+  --tooltip-color-muted:     #c3cad4; /* spirits-500 */
+  --tooltip-radius:          var(--radius-sm, 8px);
+  --tooltip-shadow:          0px 0px 2px 0px rgba(0, 0, 0, 0.16);
+  --tooltip-font:            var(--font-text, 'Helvetica Neue', Helvetica, Arial, sans-serif);
+  --tooltip-font-size:       13px;
+  --tooltip-line-height:     16px;
+  --tooltip-padding-x:       12px;
+  --tooltip-padding-y:       8px;
+  --tooltip-max-width:       240px;
+  --tooltip-max-width-exp:   320px;
+  --tooltip-arrow-w:         30px;
+  --tooltip-arrow-h:         4px;
+  --tooltip-arrow-half:      9px; /* half of 18px triangle base */
+  --tooltip-offset:          8px; /* gap between arrow tip and anchor */
+  --tooltip-dur-in:          180ms;
+  --tooltip-dur-out:         150ms;
+}
+
+/* ─── Keyframes — direction-aware (timing preserved exactly) ─────────────── */
+
+/* Top: fade + slide up on enter, slide down on exit */
+@keyframes tooltip-in-top {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);   }
+}
+@keyframes tooltip-out-top {
+  from { opacity: 1; transform: translateX(-50%) translateY(0);   }
+  to   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+}
+
+/* Top — Start/End positions (no centering translate) */
+@keyframes tooltip-in-top-offset {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes tooltip-out-top-offset {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(6px); }
+}
+
+/* Bottom: fade + slide down on enter, slide up on exit */
+@keyframes tooltip-in-bottom {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+@keyframes tooltip-out-bottom {
+  from { opacity: 1; transform: translateX(-50%) translateY(0);    }
+  to   { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+}
+
+/* Bottom — Start/End positions */
+@keyframes tooltip-in-bottom-offset {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes tooltip-out-bottom-offset {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+/* Left: fade + slide right on enter, slide left on exit */
+@keyframes tooltip-in-left {
+  from { opacity: 0; transform: translateY(-50%) translateX(6px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0);   }
+}
+@keyframes tooltip-out-left {
+  from { opacity: 1; transform: translateY(-50%) translateX(0);   }
+  to   { opacity: 0; transform: translateY(-50%) translateX(6px); }
+}
+
+/* Left — Start/End positions */
+@keyframes tooltip-in-left-offset {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0);   }
+}
+@keyframes tooltip-out-left-offset {
+  from { opacity: 1; transform: translateX(0);   }
+  to   { opacity: 0; transform: translateX(6px); }
+}
+
+/* Right: fade + slide left on enter, slide right on exit */
+@keyframes tooltip-in-right {
+  from { opacity: 0; transform: translateY(-50%) translateX(-6px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0);    }
+}
+@keyframes tooltip-out-right {
+  from { opacity: 1; transform: translateY(-50%) translateX(0);    }
+  to   { opacity: 0; transform: translateY(-50%) translateX(-6px); }
+}
+
+/* Right — Start/End positions */
+@keyframes tooltip-in-right-offset {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes tooltip-out-right-offset {
+  from { opacity: 1; transform: translateX(0);    }
+  to   { opacity: 0; transform: translateX(-6px); }
+}
+
+/* ─── Host wrapper ────────────────────────────────────────────────────────── */
+.tooltip-host {
+  position:    relative;
+  display:     inline-flex;
+  align-items: center;
+}
+
+/* ─── Tooltip surface — base ─────────────────────────────────────────────── */
+.tooltip {
+  position:       absolute;
+  display:        flex;
+  align-items:    center;
+  pointer-events: none;
+  z-index:        100;
+}
+
+/* ─── Placement: Top (default) ───────────────────────────────────────────── */
+.tooltip[data-side="Top"] {
+  bottom:         calc(100% + var(--tooltip-offset));
+  left:           50%;
+  transform:      translateX(-50%);
+  flex-direction: column;   /* inner → arrow (arrow at bottom, points down) */
+}
+
+/* ─── Placement: Bottom ──────────────────────────────────────────────────── */
+.tooltip[data-side="Bottom"] {
+  top:            calc(100% + var(--tooltip-offset));
+  left:           50%;
+  transform:      translateX(-50%);
+  flex-direction: column; /* arrow DOM-first + column = arrow above body ✓ */
+}
+
+/* ─── Placement: Left ────────────────────────────────────────────────────── */
+.tooltip[data-side="Left"] {
+  right:          calc(100% + var(--tooltip-offset));
+  top:            50%;
+  transform:      translateY(-50%);
+  flex-direction: row;      /* inner → arrow (arrow at right, points right) */
+}
+
+/* ─── Placement: Right ───────────────────────────────────────────────────── */
+.tooltip[data-side="Right"] {
+  left:           calc(100% + var(--tooltip-offset));
+  top:            50%;
+  transform:      translateY(-50%);
+  flex-direction: row; /* arrow DOM-first + row = arrow at left ✓ */
+}
+
+/* ─── Position offsets — Top / Bottom ───────────────────────────────────── */
+.tooltip[data-side="Top"][data-position="Start"],
+.tooltip[data-side="Bottom"][data-position="Start"] {
+  left:        0;
+  transform:   none;
+  align-items: flex-start;
+}
+
+.tooltip[data-side="Top"][data-position="End"],
+.tooltip[data-side="Bottom"][data-position="End"] {
+  left:        auto;
+  right:       0;
+  transform:   none;
+  align-items: flex-end;
+}
+
+/* ─── Position offsets — Left / Right ───────────────────────────────────── */
+.tooltip[data-side="Left"][data-position="Start"],
+.tooltip[data-side="Right"][data-position="Start"] {
+  top:             0;
+  transform:       none;
+  justify-content: flex-start;
+}
+
+.tooltip[data-side="Left"][data-position="End"],
+.tooltip[data-side="Right"][data-position="End"] {
+  top:             auto;
+  bottom:          0;
+  transform:       none;
+  justify-content: flex-end;
+}
+
+/* ─── Inner surface ──────────────────────────────────────────────────────── */
+.tooltip__inner {
+  background:    var(--tooltip-bg);
+  border-radius: var(--tooltip-radius);
+  padding:       var(--tooltip-padding-y) var(--tooltip-padding-x);
+  box-shadow:    var(--tooltip-shadow);
+  font-family:   var(--tooltip-font);
+  font-size:     var(--tooltip-font-size);
+  font-weight:   400;
+  line-height:   var(--tooltip-line-height);
+  color:         var(--tooltip-color);
+  max-width:     var(--tooltip-max-width);
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  white-space:   nowrap;
+}
+
+/* Expanded size */
+.tooltip[data-size="Expanded"] .tooltip__inner {
+  min-width:      272px;
+  max-width:      var(--tooltip-max-width-exp);
+  padding:        16px;
+  gap:            16px;
+  flex-direction: column;
+  align-items:    flex-start;
+  white-space:    normal;
+  text-align:     left;
+}
+
+/* ─── Expanded: Title ────────────────────────────────────────────────────── */
+.tooltip__title {
+  display:        flex;
+  gap:            8px;
+  align-items:    flex-start;
+  font-family:    var(--tooltip-font);
+  font-size:      16px;
+  font-weight:    500;
+  line-height:    24px;
+  letter-spacing: -0.02em;
+  color:          var(--tooltip-color);
+  width:          100%;
+}
+
+.tooltip__title-icon {
+  display:     flex;
+  align-items: center;
+  padding:     4px 0;
+  flex-shrink: 0;
+}
+
+/* ─── Expanded: Image ────────────────────────────────────────────────────── */
+.tooltip__image {
+  width:         100%;
+  height:        120px;
+  border-radius: 4px;
+  object-fit:    cover;
+  display:       block;
+  flex-shrink:   0;
+}
+
+/* ─── Expanded: Description ──────────────────────────────────────────────── */
+.tooltip__description {
+  display:     flex;
+  gap:         8px;
+  align-items: flex-start;
+  width:       100%;
+}
+
+.tooltip__desc-icon {
+  display:     flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.tooltip__description p {
+  font-family:  var(--tooltip-font);
+  font-size:    13px;
+  font-weight:  400;
+  line-height:  16px;
+  color:        var(--tooltip-color-muted);
+  margin:       0;
+}
+
+/* ─── Default: Icon ──────────────────────────────────────────────────────── */
+.tooltip__icon {
+  display:     flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ─── Arrow — base (Top side: points down) ───────────────────────────────── */
+.tooltip__arrow {
+  width:           var(--tooltip-arrow-w);
+  height:          var(--tooltip-arrow-h);
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+  flex-shrink:     0;
+}
+
+.tooltip__arrow::before {
+  content:      '';
+  display:      block;
+  width:        0;
+  height:       0;
+  border-left:  var(--tooltip-arrow-half) solid transparent;
+  border-right: var(--tooltip-arrow-half) solid transparent;
+  border-top:   var(--tooltip-arrow-h) solid var(--tooltip-bg);
+}
+
+/* Bottom side: arrow points up */
+.tooltip[data-side="Bottom"] .tooltip__arrow::before {
+  border-top:    none;
+  border-bottom: var(--tooltip-arrow-h) solid var(--tooltip-bg);
+}
+
+/* Left side: arrow points right */
+.tooltip[data-side="Left"] .tooltip__arrow {
+  width:  var(--tooltip-arrow-h);
+  height: var(--tooltip-arrow-w);
+}
+.tooltip[data-side="Left"] .tooltip__arrow::before {
+  border-top:    var(--tooltip-arrow-half) solid transparent;
+  border-bottom: var(--tooltip-arrow-half) solid transparent;
+  border-left:   var(--tooltip-arrow-h) solid var(--tooltip-bg);
+  border-right:  none;
+}
+
+/* Right side: arrow points left */
+.tooltip[data-side="Right"] .tooltip__arrow {
+  width:  var(--tooltip-arrow-h);
+  height: var(--tooltip-arrow-w);
+}
+.tooltip[data-side="Right"] .tooltip__arrow::before {
+  border-top:    var(--tooltip-arrow-half) solid transparent;
+  border-bottom: var(--tooltip-arrow-half) solid transparent;
+  border-right:  var(--tooltip-arrow-h) solid var(--tooltip-bg);
+  border-left:   none;
+}
+
+/* ─── Animation phases — direction-aware ─────────────────────────────────── */
+
+/* Top — Center (uses centering translateX) */
+.tooltip[data-side="Top"][data-position="Center"].tooltip--visible {
+  animation: tooltip-in-top  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Top"][data-position="Center"].tooltip--exiting {
+  animation: tooltip-out-top var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Top — Start / End (no centering transform) */
+.tooltip[data-side="Top"][data-position="Start"].tooltip--visible,
+.tooltip[data-side="Top"][data-position="End"].tooltip--visible {
+  animation: tooltip-in-top-offset  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Top"][data-position="Start"].tooltip--exiting,
+.tooltip[data-side="Top"][data-position="End"].tooltip--exiting {
+  animation: tooltip-out-top-offset var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Bottom — Center */
+.tooltip[data-side="Bottom"][data-position="Center"].tooltip--visible {
+  animation: tooltip-in-bottom  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Bottom"][data-position="Center"].tooltip--exiting {
+  animation: tooltip-out-bottom var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Bottom — Start / End */
+.tooltip[data-side="Bottom"][data-position="Start"].tooltip--visible,
+.tooltip[data-side="Bottom"][data-position="End"].tooltip--visible {
+  animation: tooltip-in-bottom-offset  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Bottom"][data-position="Start"].tooltip--exiting,
+.tooltip[data-side="Bottom"][data-position="End"].tooltip--exiting {
+  animation: tooltip-out-bottom-offset var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Left — Center */
+.tooltip[data-side="Left"][data-position="Center"].tooltip--visible {
+  animation: tooltip-in-left  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Left"][data-position="Center"].tooltip--exiting {
+  animation: tooltip-out-left var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Left — Start / End */
+.tooltip[data-side="Left"][data-position="Start"].tooltip--visible,
+.tooltip[data-side="Left"][data-position="End"].tooltip--visible {
+  animation: tooltip-in-left-offset  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Left"][data-position="Start"].tooltip--exiting,
+.tooltip[data-side="Left"][data-position="End"].tooltip--exiting {
+  animation: tooltip-out-left-offset var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Right — Center */
+.tooltip[data-side="Right"][data-position="Center"].tooltip--visible {
+  animation: tooltip-in-right  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Right"][data-position="Center"].tooltip--exiting {
+  animation: tooltip-out-right var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}
+
+/* Right — Start / End */
+.tooltip[data-side="Right"][data-position="Start"].tooltip--visible,
+.tooltip[data-side="Right"][data-position="End"].tooltip--visible {
+  animation: tooltip-in-right-offset  var(--tooltip-dur-in)  var(--ease-emerge, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+.tooltip[data-side="Right"][data-position="Start"].tooltip--exiting,
+.tooltip[data-side="Right"][data-position="End"].tooltip--exiting {
+  animation: tooltip-out-right-offset var(--tooltip-dur-out) var(--ease-recede, cubic-bezier(0.4, 0, 1, 1)) both;
+}

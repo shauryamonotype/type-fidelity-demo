@@ -1,0 +1,24 @@
+:root {
+  --ks-font:        var(--font-micro);
+  --ks-size:        var(--text-m2-size);
+  --ks-line-height: var(--text-m2-line-height);
+  --ks-weight:      var(--font-weight-medium);
+  --ks-color:       var(--color-text-muted);
+  --ks-gap:         2px;
+}
+
+.ks {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ks-gap);
+  font-family: var(--ks-font);
+  font-size: var(--ks-size);
+  font-weight: var(--ks-weight);
+  line-height: var(--ks-line-height);
+  color: var(--ks-color);
+  white-space: nowrap;
+}
+
+.ks__key {
+  display: inline-block;
+}

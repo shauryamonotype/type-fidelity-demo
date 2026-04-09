@@ -1,0 +1,249 @@
+/* ─── Tokens ──────────────────────────────────────────────────────────────────── */
+
+:root {
+  --sb-height:          80px;
+  --sb-collapsed-w:     88px;   /* 32px pad + 24px icon + 32px pad */
+  --sb-expanded-w:      368px;
+  --sb-pad-h:           var(--space-8);
+  --sb-gap:             var(--space-2);
+  --sb-font-size:       var(--text-b1-size);
+  --sb-disabled-opacity: 0.4;
+
+  --sb-border:          var(--color-border-default);       /* #dbdfe5 */
+  --sb-hover-bg:        var(--color-bg-primary-subtle);    /* #f2f5fd */
+  --sb-focus-border:    var(--color-primary);              /* #1a73e8 */
+  --sb-text:            var(--color-text-primary);         /* #1e242c */
+  --sb-placeholder:     var(--color-text-muted);           /* #667488 */
+  --sb-icon-default:    var(--color-text-muted);
+  --sb-icon-active:     var(--color-primary);
+
+  --sb-expand-dur:      220ms;
+  --sb-fade-dur:        140ms;
+  --sb-char-dur:         75ms;
+  /* icon center (44px) + icon half (12px) + 8px gap */
+  --sb-field-indent:    64px;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes sbCharSlideIn {
+  from { opacity: 0; transform: translateY(4px);  }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes sbCharSlideOut {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+/* ─── Container ──────────────────────────────────────────────────────────────── */
+
+.sb {
+  position: relative;
+  height: var(--sb-height);
+  width: var(--sb-collapsed-w);
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--sb-border);
+  overflow: hidden;
+  /* Collapse */
+  transition: width var(--sb-expand-dur) var(--ease-recede);
+}
+
+/* Blue bottom line — slides up from the bottom after expansion */
+.sb::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 2;
+  background: var(--sb-focus-border);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 160ms var(--ease-recede) 0ms;
+}
+
+.sb--expanded {
+  width: var(--sb-expanded-w);
+  /* Expand */
+  transition: width var(--sb-expand-dur) var(--ease-standard);
+}
+
+.sb--expanded::after {
+  transform: scaleY(1);
+  /* Slides up from the bottom 400ms after expansion starts */
+  transition: transform 200ms var(--ease-emerge) 400ms;
+}
+
+/* ─── Trigger — anchored at left, stays put as container grows right ─────────── */
+
+.sb__trigger {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: var(--sb-collapsed-w);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sb-icon-default);
+  cursor: pointer;
+  transition:
+    color      var(--sb-fade-dur)   0ms,
+    background 140ms var(--ease-standard);
+}
+
+.sb__trigger:hover {
+  background: var(--sb-hover-bg);
+}
+
+.sb__trigger:focus-visible {
+  outline: 2px solid var(--sb-focus-border);
+  outline-offset: -2px;
+}
+
+.sb--expanded .sb__trigger {
+  color: var(--sb-icon-active);
+  pointer-events: none;
+  cursor: default;
+  /* Icon turns blue AFTER expansion completes */
+  transition:
+    color      var(--sb-fade-dur)   var(--sb-expand-dur),
+    background 140ms var(--ease-standard);
+}
+
+/* ─── Expanded field — input + clear only (icon is the traveling trigger) ────── */
+
+.sb__field {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sb-gap);
+  /* left padding: icon right-edge (56px) + 8px gap */
+  padding: 0 var(--sb-pad-h) 0 var(--sb-field-indent);
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(12px);
+  /* Collapse transitions (immediate) */
+  transition:
+    opacity   var(--sb-fade-dur) 0ms,
+    transform var(--sb-fade-dur) 0ms;
+}
+
+.sb--expanded .sb__field {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+  /* Expand transitions: text slides in AFTER expansion */
+  transition:
+    opacity   var(--sb-fade-dur) var(--sb-expand-dur),
+    transform var(--sb-fade-dur) var(--sb-expand-dur);
+}
+
+/* ─── Text area — wraps input + animated overlay ─────────────────────────────── */
+
+.sb__text-area {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+/* ─── Input ──────────────────────────────────────────────────────────────────── */
+
+.sb__input {
+  width: 100%;
+  height: 24px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-text);
+  font-size: var(--sb-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--text-b1-line-height);
+  color: var(--sb-text);
+  caret-color: var(--sb-focus-border);
+}
+
+/* When overlay is active, hide native text but keep caret */
+.sb__input--has-value {
+  color: transparent;
+}
+
+.sb__input:focus-visible {
+  outline: none; /* focus indicated by container's blue bottom line */
+}
+
+.sb__input::placeholder {
+  color: var(--sb-placeholder);
+}
+
+/* ─── Animated character overlay ─────────────────────────────────────────────── */
+
+.sb__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-text);
+  font-size: var(--sb-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--text-b1-line-height);
+}
+
+.sb__char {
+  display: inline-block;
+  color: var(--sb-text);
+}
+
+.sb__char[data-new] {
+  animation: sbCharSlideIn var(--sb-char-dur) var(--ease-emerge) both;
+}
+
+.sb__char[data-exiting] {
+  animation: sbCharSlideOut var(--sb-char-dur) var(--ease-recede) both;
+}
+
+/* ─── Clear button ───────────────────────────────────────────────────────────── */
+
+.sb__clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sb-icon-default);
+  cursor: pointer;
+  transition: color 140ms var(--ease-standard);
+}
+
+.sb__clear:hover {
+  color: var(--sb-text);
+}
+
+/* ─── Disabled ───────────────────────────────────────────────────────────────── */
+
+.sb--disabled {
+  opacity: var(--sb-disabled-opacity);
+  pointer-events: none;
+}
+
+.sb--disabled .sb__trigger {
+  cursor: not-allowed;
+}

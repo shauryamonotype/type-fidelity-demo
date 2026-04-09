@@ -1,0 +1,79 @@
+@import '../../tokens.css';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TableRow
+   Semantic <tr> with 56px fixed height, hover + selected states.
+   Stripe pattern handled via :nth-child on the parent <tbody>.
+───────────────────────────────────────────────────────────────────────────── */
+
+.table-row {
+  height:     var(--tc-row-height);     /* 56px */
+  background: var(--table-row-bg);      /* white / dark-mode raised */
+  transition: background 120ms var(--ease-standard);
+}
+
+/* Alternating stripe */
+.table-row:nth-child(even) {
+  background: var(--table-row-bg-alt);  /* f9fafb / dark */
+}
+
+/* Hover — whole row turns blue-duck-50 */
+.table-row:hover {
+  background: var(--color-blue-duck-50);
+}
+
+/* Selected — same tint as hover; stays on top of stripe */
+.table-row--selected,
+.table-row--selected:nth-child(even) {
+  background: var(--table-row-bg-selected);
+}
+
+/* Hover on selected row — slightly deeper tint */
+.table-row--selected:hover {
+  background: var(--color-blue-duck-100);
+}
+
+/* Pointer cursor when row has an onClick handler */
+.table-row--clickable {
+  cursor: pointer;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   <td> cells — single source of truth for all borders
+   border-bottom  → row separator
+   border-right   → column divider (last child override removes rightmost one)
+───────────────────────────────────────────────────────────────────────────── */
+
+.table-row__cell {
+  padding:        0;
+  height:         var(--tc-row-height);
+  vertical-align: middle;
+  border-bottom:  1px solid var(--color-border-default);
+  border-right:   1px solid var(--color-border-default);
+  /* Column width is set by the Table component via colgroup / inline style */
+}
+
+/* Last column in the row: no right border — outer wrapper edge handles it */
+tr > td:last-child {
+  border-right: none;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Checkbox cell
+───────────────────────────────────────────────────────────────────────────── */
+
+.table-row__cell--checkbox {
+  width:     48px;
+  min-width: 48px;
+  /* border-bottom and border-right come from .table-row__cell */
+}
+
+.table-row__checkbox-wrap {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  height:          100%;
+  padding:         0 var(--space-2);  /* 8px */
+}

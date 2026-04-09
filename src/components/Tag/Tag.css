@@ -1,0 +1,143 @@
+:root {
+  --tag-bg-default:    var(--color-spirits-200);
+  --tag-text-default:  var(--color-spirits-800);
+  --tag-bg-error:      var(--color-red-100);
+  --tag-text-error:    var(--color-danger);
+  --tag-bg-selected:   var(--color-blue-duck-100);
+  --tag-text-selected: var(--color-blue-duck-700);
+
+  --tag-radius:        var(--radius-sm);  /* 8px */
+  --tag-gap:           var(--space-2);    /* 8px */
+
+  /* Large */
+  --tag-padding-lg-v:  var(--space-2);    /* 8px */
+  --tag-padding-lg-h:  var(--space-3);    /* 12px */
+  --tag-font-size-lg:  13px;
+  --tag-line-height-lg: 16px;
+  --tag-height-lg:     32px;
+
+  /* Medium */
+  --tag-padding-md-v:  var(--space-1);    /* 4px */
+  --tag-padding-md-h:  var(--space-3);    /* 12px */
+  --tag-font-size-md:  11px;
+  --tag-line-height-md: 16px;
+  --tag-height-md:     24px;
+
+  /* Motion */
+  --tag-enter-dur:     180ms;
+  --tag-exit-dur:      120ms;
+}
+
+/* ── Keyframes ── */
+@keyframes tag-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tag-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+}
+
+/* ── Base ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tag-gap);
+  border-radius: var(--tag-radius);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: var(--font-weight-medium);
+
+  /* Smooth state colour crossfade */
+  transition:
+    background 220ms var(--ease-standard),
+    color       220ms var(--ease-standard);
+
+  /* Enter animation on mount */
+  animation: tag-enter var(--tag-enter-dur) var(--ease-emerge) both;
+}
+
+/* ── Exiting ── */
+.tag--exiting {
+  animation: tag-exit var(--tag-exit-dur) var(--ease-recede) both;
+  pointer-events: none;
+}
+
+/* ── Sizes ── */
+.tag--large {
+  height: var(--tag-height-lg);
+  padding: var(--tag-padding-lg-v) var(--space-2) var(--tag-padding-lg-v) var(--tag-padding-lg-h);
+  font-family: var(--font-text);
+  font-size: var(--tag-font-size-lg);
+  line-height: var(--tag-line-height-lg);
+}
+
+.tag--medium {
+  height: var(--tag-height-md);
+  padding: var(--tag-padding-md-v) var(--space-2) var(--tag-padding-md-v) var(--tag-padding-md-h);
+  font-family: var(--font-micro);
+  font-size: var(--tag-font-size-md);
+  line-height: var(--tag-line-height-md);
+}
+
+/* ── States ── */
+.tag--default {
+  background: var(--tag-bg-default);
+  color: var(--tag-text-default);
+}
+
+.tag--error {
+  background: var(--tag-bg-error);
+  color: var(--tag-text-error);
+}
+
+.tag--selected {
+  background: var(--tag-bg-selected);
+  color: var(--tag-text-selected);
+}
+
+/* ── Label ── */
+.tag__label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Remove button ── */
+.tag__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 150ms var(--ease-standard);
+  line-height: 0;
+}
+
+.tag__remove:hover {
+  opacity: 1;
+}
+
+.tag__remove:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+  border-radius: 2px;
+}

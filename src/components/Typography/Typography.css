@@ -1,0 +1,180 @@
+@import '../../tokens.css';
+
+/* ─── Base ───────────────────────────────────────────────────────────────────*/
+
+.typography {
+  margin:  0;
+  padding: 0;
+}
+
+/* ─── Variants ───────────────────────────────────────────────────────────────*/
+/* Font family, size, line-height, and default weight/tracking per scale level  */
+
+/* Hero — MT Disp, weight 800 only */
+
+.typography--hero1 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-hero1-size);
+  line-height:   var(--text-hero1-line-height);
+  font-weight:   var(--font-weight-xbold);
+  letter-spacing: var(--text-hero1-tracking);
+}
+
+.typography--hero2 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-hero2-size);
+  line-height:   var(--text-hero2-line-height);
+  font-weight:   var(--font-weight-xbold);
+  letter-spacing: var(--text-hero2-tracking);
+}
+
+.typography--hero3 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-hero3-size);
+  line-height:   var(--text-hero3-line-height);
+  font-weight:   var(--font-weight-xbold);
+  letter-spacing: var(--text-hero3-tracking);
+}
+
+/* H1–H4 — MT Disp, default bold */
+
+.typography--h1 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-h1-size);
+  line-height:   var(--text-h1-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h1-tracking-bold);
+}
+.typography--h1.typography--medium,
+.typography--h1.typography--regular {
+  letter-spacing: var(--text-h1-tracking-medium);
+}
+
+.typography--h2 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-h2-size);
+  line-height:   var(--text-h2-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h2-tracking);
+}
+
+.typography--h3 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-h3-size);
+  line-height:   var(--text-h3-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h3-tracking-bold);
+}
+.typography--h3.typography--medium,
+.typography--h3.typography--regular {
+  letter-spacing: var(--text-h3-tracking-medium);
+}
+
+.typography--h4 {
+  font-family:   var(--font-display);
+  font-size:     var(--text-h4-size);
+  line-height:   var(--text-h4-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h4-tracking);
+}
+
+/* H5–H7 — MT Text, default bold */
+
+.typography--h5 {
+  font-family:   var(--font-text);
+  font-size:     var(--text-h5-size);
+  line-height:   var(--text-h5-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h5-tracking-bold);
+}
+.typography--h5.typography--medium,
+.typography--h5.typography--regular {
+  letter-spacing: var(--text-h5-tracking-medium);
+}
+
+.typography--h6 {
+  font-family:   var(--font-text);
+  font-size:     var(--text-h6-size);
+  line-height:   var(--text-h6-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h6-tracking-bold);
+}
+.typography--h6.typography--medium,
+.typography--h6.typography--regular {
+  letter-spacing: var(--text-h6-tracking-medium);
+}
+
+.typography--h7 {
+  font-family:   var(--font-text);
+  font-size:     var(--text-h7-size);
+  line-height:   var(--text-h7-line-height);
+  font-weight:   var(--font-weight-bold);
+  letter-spacing: var(--text-h7-tracking-bold);
+}
+.typography--h7.typography--medium,
+.typography--h7.typography--regular {
+  letter-spacing: var(--text-h7-tracking-medium);
+}
+
+/* B1–B2 — MT Text, default regular */
+
+.typography--b1 {
+  font-family:   var(--font-text);
+  font-size:     var(--text-b1-size);
+  line-height:   var(--text-b1-line-height);
+  font-weight:   var(--font-weight-regular);
+  letter-spacing: var(--text-b1-tracking-regular);
+}
+.typography--b1.typography--bold {
+  letter-spacing: var(--text-b1-tracking-bold);
+}
+.typography--b1.typography--medium {
+  letter-spacing: var(--text-b1-tracking-medium);
+}
+
+.typography--b2 {
+  font-family:   var(--font-text);
+  font-size:     var(--text-b2-size);
+  line-height:   var(--text-b2-line-height);
+  font-weight:   var(--font-weight-regular);
+  letter-spacing: var(--text-b2-tracking);
+}
+
+/* M1–M2 — MT Micro */
+
+.typography--m1 {
+  font-family:   var(--font-micro);
+  font-size:     var(--text-m1-size);
+  line-height:   var(--text-m1-line-height);
+  font-weight:   var(--font-weight-medium);
+  letter-spacing: var(--text-m1-tracking);
+}
+
+.typography--m2 {
+  font-family:   var(--font-micro);
+  font-size:     var(--text-m2-size);
+  line-height:   var(--text-m2-line-height);
+  font-weight:   var(--font-weight-regular);
+  letter-spacing: var(--text-m2-tracking);
+}
+
+/* ─── Weight overrides ───────────────────────────────────────────────────────*/
+/* Applied on top of variant defaults; hero variants ignore these             */
+
+.typography--bold    { font-weight: var(--font-weight-bold);    }
+.typography--medium  { font-weight: var(--font-weight-medium);  }
+.typography--regular { font-weight: var(--font-weight-regular); }
+
+/* ─── Alignment ──────────────────────────────────────────────────────────────*/
+
+.typography--left   { text-align: left;   }
+.typography--center { text-align: center; }
+.typography--right  { text-align: right;  }
+
+/* ─── Truncate ───────────────────────────────────────────────────────────────*/
+
+.typography--truncate {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}

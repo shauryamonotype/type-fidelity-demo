@@ -1,0 +1,266 @@
+@import '../../tokens.css';
+
+/* ─── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  /* Container */
+  --menu-bg:              var(--color-spirits-25);       /* #fcfcfd */
+  --menu-border:          var(--color-border);           /* #dbdfe5 Spirits 300 */
+  --menu-radius:          var(--radius-lg);              /* 16px */
+  --menu-shadow:
+    0px 112px   228px    0px rgba(55, 73, 81, 0.12),
+    0px 25.017px 50.927px 0px rgba(55, 73, 81, 0.07),
+    0px 7.448px  15.162px 0px rgba(55, 73, 81, 0.05);
+
+  /* Layout */
+  --menu-width:              240px;
+  --menu-padding-x:          8px;
+  --menu-padding-top:        8px;
+  --menu-section-gap:        8px;   /* gap between sections */
+  --menu-section-inner-gap:  4px;   /* gap between title and items */
+  --menu-section-pb:         4px;
+  --menu-section-divider:    var(--color-border);        /* #dbdfe5 */
+  --menu-section-title-px:   8px;
+  --menu-section-title-py:   4px;
+
+  /* MenuItem */
+  --menu-item-radius:     var(--radius-sm);              /* 8px */
+  --menu-item-padding:    12px;
+  --menu-item-height:     40px;
+  --menu-item-gap:        12px;
+  --menu-icon-size:       16px;
+
+  /* Text colours */
+  --menu-text-default:    var(--color-text-primary);     /* #1e242c Spirits 900 */
+  --menu-text-muted:      var(--color-text-secondary);   /* #576579 Spirits 700 */
+  --menu-text-disabled:   #9ea6ac;                       /* "Light Gray" — exact Figma value */
+  --menu-text-danger:     var(--color-danger);           /* #dc0024 */
+
+  /* Icon colours — #9ea6ac is the "Light Gray" named colour from the source Figma */
+  --menu-icon-default:    #9ea6ac;
+  --menu-icon-danger:     var(--color-danger);
+  --menu-icon-disabled:   var(--color-spirits-400);      /* #cfd5dd — more muted */
+
+  /* Item state backgrounds — hover is blue-tinted per Figma */
+  --menu-item-hover-bg:      var(--color-blue-duck-50);  /* #f2f5fd */
+  --menu-item-hover-border:  var(--color-blue-duck-100); /* #e4e9fa */
+  --menu-item-active-bg:     var(--color-blue-duck-100); /* #e4e9fa */
+  --menu-item-active-border: var(--color-blue-duck-200); /* #c6d2f6 */
+
+  /* Selected state */
+  --menu-item-selected-bg:      var(--color-blue-duck-100); /* #e4e9fa */
+  --menu-item-selected-border:  var(--color-blue-duck-200); /* #c6d2f6 */
+
+  /* Danger item state backgrounds */
+  --menu-item-danger-hover-bg:    var(--color-red-25);   /* #fdf8f8 */
+  --menu-item-danger-hover-border: var(--color-red-100); /* #f8e4e4 */
+  --menu-item-danger-active-bg:   var(--color-red-50);   /* #fbf1f2 */
+
+  /* Shortcut hint */
+  --menu-shortcut-color:  #9ea6ac;
+
+  /* Animation */
+  --menu-emerge-dur:       200ms;
+  --menu-recede-dur:       200ms;
+  --menu-item-dur:         100ms;
+  --menu-item-active-dur:   80ms;
+
+  /* Transform origin — override per usage context */
+  --menu-transform-origin: top left;
+
+  /* Scroll fade */
+  --menu-fade-height: 64px;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes menu-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    filter: blur(2px);
+  }
+}
+
+/* ─── Menu container ─────────────────────────────────────────────────────────── */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: var(--menu-width);
+  padding: var(--menu-padding-top) var(--menu-padding-x) 0;
+  background: var(--menu-bg);
+  border: 1px solid var(--menu-border);
+  border-radius: var(--menu-radius);
+  box-shadow: var(--menu-shadow);
+  overflow: hidden;
+  transform-origin: var(--menu-transform-origin);
+  position: relative;
+}
+
+/* ─── Scrollable body ────────────────────────────────────────────────────────── */
+
+.menu__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--menu-section-gap);    /* 8px between each section — matches Figma */
+  /* Thin macOS-style scrollbar — visible only while scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+.menu__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menu__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu__body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-full);
+}
+
+.menu__body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.30);
+}
+
+/* ─── Scroll fade overlay ─────────────────────────────────────────────────────── */
+
+.menu__scroll-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 4px; /* leave scrollbar track uncovered */
+  height: var(--menu-fade-height);
+  background: linear-gradient(to bottom, transparent, var(--menu-bg));
+  backdrop-filter: blur(1px);
+  border-radius: 0 0 var(--menu-radius) var(--menu-radius);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─── Sliding hover highlight ─────────────────────────────────────────────────── */
+
+.menu__slide-highlight {
+  position:       absolute;
+  left:           var(--menu-padding-x);
+  right:          var(--menu-padding-x);
+  background:     var(--menu-item-hover-bg);
+  border:         1px solid var(--menu-item-hover-border);
+  border-radius:  var(--menu-item-radius);
+  pointer-events: none;
+  z-index:        0;
+  transition:
+    top     150ms var(--ease-standard),
+    height  150ms var(--ease-standard),
+    opacity 100ms linear;
+}
+
+.menu--visible {
+  animation: menu-in var(--menu-emerge-dur) var(--ease-standard) both;
+}
+
+.menu--exiting {
+  animation: menu-out var(--menu-recede-dur) var(--ease-standard) both;
+}
+
+/* ─── Section ────────────────────────────────────────────────────────────────── */
+
+.menu__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--menu-section-inner-gap);   /* 4px between section title and items */
+  width: 100%;
+  padding-bottom: var(--menu-section-pb);
+}
+
+.menu__section:not(:last-child) {
+  border-bottom: 1px solid var(--menu-section-divider);
+}
+
+.menu__section-title {
+  display: flex;
+  align-items: center;
+  padding: var(--menu-section-title-py) var(--menu-section-title-px);
+  color: var(--menu-text-muted);
+  user-select: none;
+}
+
+.menu__section-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);  /* 4px between items — matches Figma MenuItemContainer gap */
+}
+
+/* ─── MenuItem context overrides (when inside .menu) ─────────────────────── */
+/* MenuItem's own styles handle the base appearance. These overrides adjust
+   only what needs to differ inside a Menu — specifically, the hover background
+   is suppressed so the slide highlight can provide that feedback instead.      */
+
+/* Sit above the sliding highlight */
+.menu .menu-item {
+  position: relative;
+  z-index:  1;
+}
+
+/* Suppress MenuItem's own blue hover bg — slide highlight does the work.
+   Danger items are excluded: they keep their red hover to override the highlight. */
+.menu .menu-item:hover:not(:disabled):not(.menu-item--selected):not(.menu-item--danger) {
+  background-color: transparent;
+  border-color:     transparent;
+}
+
+/* Active/press — show the filled state for a snappy press feel */
+.menu .menu-item:active:not(:disabled) {
+  background-color: var(--menu-item-active-bg);
+  border-color:     var(--menu-item-active-border);
+  transform:        scale(0.99);
+  transition:
+    background-color var(--menu-item-active-dur) var(--ease-standard),
+    border-color     var(--menu-item-active-dur) var(--ease-standard),
+    transform        var(--menu-item-active-dur) var(--ease-standard);
+}
+
+/* Danger active */
+.menu .menu-item--danger:active:not(:disabled) {
+  background-color: var(--menu-item-danger-active-bg);
+}
+
+/* Focus ring — inset outline matches the old menu__item style */
+.menu .menu-item:focus-visible {
+  outline:        2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-color:   transparent;
+}
+
+/* Override MenuItem's selected bg tokens with the menu-specific ones */
+.menu .menu-item--selected {
+  background-color: var(--menu-item-selected-bg);
+  border-color:     var(--menu-item-selected-border);
+}
+
+/* Icon colour in menu context — use the "Light Gray" named value from Figma */
+.menu .menu-item__icon {
+  color: var(--menu-icon-default);
+}
+
+.menu .menu-item__right {
+  color: var(--menu-icon-default);
+}

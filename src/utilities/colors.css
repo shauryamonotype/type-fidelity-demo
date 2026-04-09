@@ -1,0 +1,74 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Antiqua Design System — Colour Utilities
+   Source: tokens.css semantic aliases
+
+   Usage in layouts:
+     @import '../utilities/colors.css';   (adjust depth as needed)
+
+   Then apply via className:
+     <div className="bg-surface border-default">
+       <p className="text-secondary">…</p>
+     </div>
+
+   Naming mirrors Typography's `color` prop — use the same role names.
+   Never hardcode hex values in layouts; always use a token or utility class.
+───────────────────────────────────────────────────────────────────────────── */
+
+@import '../tokens.css';
+
+
+/* ── Text ────────────────────────────────────────────────────────────────────*/
+
+.text-primary   { color: var(--color-text-primary);   }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted     { color: var(--color-text-muted);     }
+.text-disabled  { color: var(--color-text-disabled);  }
+.text-on-brand  { color: var(--color-text-on-brand);  }
+.text-danger    { color: var(--color-text-danger);    }
+.text-success   { color: var(--color-text-success);   }
+.text-warning   { color: var(--color-text-warning);   }
+.text-link      { color: var(--color-text-link);      }
+
+.text-link:hover { color: var(--color-text-link-hover); }
+
+
+/* ── Icon ────────────────────────────────────────────────────────────────────*/
+
+.icon-default  { color: var(--color-icon-default);  }
+.icon-muted    { color: var(--color-icon-muted);    }
+.icon-on-brand { color: var(--color-icon-on-brand); }
+.icon-danger   { color: var(--color-icon-danger);   }
+.icon-success  { color: var(--color-icon-success);  }
+.icon-warning  { color: var(--color-icon-warning);  }
+
+
+/* ── Background ──────────────────────────────────────────────────────────────*/
+
+.bg-page           { background-color: var(--color-bg-page);           }
+.bg-surface        { background-color: var(--color-bg-surface);        }
+.bg-raised         { background-color: var(--color-bg-raised);         }
+.bg-overlay        { background-color: var(--color-bg-overlay);        }
+
+.bg-primary        { background-color: var(--color-bg-primary);        }
+.bg-primary-subtle { background-color: var(--color-bg-primary-subtle); }
+
+.bg-danger         { background-color: var(--color-bg-danger);         }
+.bg-danger-subtle  { background-color: var(--color-bg-danger-subtle);  }
+
+.bg-success        { background-color: var(--color-bg-success);        }
+.bg-success-subtle { background-color: var(--color-bg-success-subtle); }
+
+.bg-warning        { background-color: var(--color-bg-warning);        }
+.bg-warning-subtle { background-color: var(--color-bg-warning-subtle); }
+
+
+/* ── Border colour ───────────────────────────────────────────────────────────*/
+/* Combine with a border-width/style rule in your layout CSS.                  */
+/* e.g.  border: 1px solid; + className="border-default"                       */
+
+.border-default { border-color: var(--color-border-default); }
+.border-strong  { border-color: var(--color-border-strong);  }
+.border-primary { border-color: var(--color-border-primary); }
+.border-danger  { border-color: var(--color-border-danger);  }
+.border-success { border-color: var(--color-border-success); }
+.border-warning { border-color: var(--color-border-warning); }

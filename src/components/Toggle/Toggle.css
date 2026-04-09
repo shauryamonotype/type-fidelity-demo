@@ -1,0 +1,172 @@
+/* ─── Tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  /* Dimensions — from Figma node 2280:10 */
+  --toggle-w:           40px;
+  --toggle-h-lg:        20px;
+  --toggle-h-sm:        16px;
+  --toggle-radius:      10px;
+
+  --toggle-knob-lg:     16px;
+  --toggle-knob-sm:     12px;
+  --toggle-knob-radius: 8px;
+  --toggle-knob-pad:    2px;   /* inset from track edge */
+
+  --toggle-pip-size:    4px;
+
+  /* Animation timing */
+  --toggle-t-slide:     220ms;
+  --toggle-t-color:     160ms;
+  --toggle-t-glow:      100ms;
+}
+
+/* ─── Track ──────────────────────────────────────────────────────────────── */
+.toggle {
+  position:           relative;
+  display:            inline-flex;
+  flex-shrink:        0;
+  width:              var(--toggle-w);
+  padding:            0;
+  border:             none;
+  border-radius:      var(--toggle-radius);
+  cursor:             pointer;
+  overflow:           visible;
+  -webkit-appearance: none;
+  appearance:         none;
+  background-color:   var(--color-spirits-500);          /* off default */
+  transition:         background-color var(--toggle-t-color) var(--ease-standard);
+}
+
+.toggle:focus-visible { outline: none; }
+.toggle:disabled      { cursor: not-allowed; }
+
+/* Partial state — col-resize cursor hints the track is split-interactive */
+.toggle[data-state="partial"],
+.toggle[data-state="partial-left"],
+.toggle[data-state="partial-right"] { cursor: col-resize; }
+
+/* Sizes */
+.toggle[data-size="Large"] { height: var(--toggle-h-lg); }
+.toggle[data-size="Small"] { height: var(--toggle-h-sm); }
+
+/* ─── Track colours ──────────────────────────────────────────────────────── */
+
+/* Off ----------------------------------------------------------------- */
+/* default track is already spirits-500                                  */
+.toggle[data-state="off"]:disabled { background-color: var(--color-spirits-600); }
+
+/* Partial resting ----------------------------------------------------- */
+.toggle[data-state="partial"][data-type="permanent"] { background-color: var(--color-blue-duck-400); }
+.toggle[data-state="partial"][data-type="temporary"] { background-color: var(--color-yellow-400);    }
+
+.toggle[data-state="partial"]:disabled[data-type="permanent"] { background-color: var(--color-blue-duck-800); }
+.toggle[data-state="partial"]:disabled[data-type="temporary"] { background-color: var(--color-yellow-800);    }
+
+/* Partial hover-left: previewing Off → grey ----------------------------- */
+.toggle[data-state="partial-left"] { background-color: var(--color-spirits-500); }
+
+/* Partial hover-right: previewing On → full colour ---------------------- */
+.toggle[data-state="partial-right"][data-type="permanent"] { background-color: var(--color-blue-duck-500); }
+.toggle[data-state="partial-right"][data-type="temporary"] { background-color: var(--color-yellow-500);    }
+
+/* On ------------------------------------------------------------------ */
+.toggle[data-state="on"][data-type="permanent"] { background-color: var(--color-blue-duck-500); }
+.toggle[data-state="on"][data-type="temporary"] { background-color: var(--color-yellow-500);    }
+
+.toggle[data-state="on"]:disabled[data-type="permanent"] { background-color: var(--color-blue-duck-800); }
+.toggle[data-state="on"]:disabled[data-type="temporary"] { background-color: var(--color-yellow-800);    }
+
+/* ─── Line ───────────────────────────────────────────────────────────────
+   1 × 4 px vertical stroke — sits at x=8, behind the knob (z-index 0).
+   Visible when knob slides right (partial/on); knob covers it when off.  */
+.toggle__line {
+  position:         absolute;
+  left:             8px;
+  width:            1px;
+  background-color: var(--color-white);
+  z-index:          0;
+  pointer-events:   none;
+  transition:       background-color var(--toggle-t-color) var(--ease-standard);
+}
+
+.toggle[data-size="Large"] .toggle__line { top: 8px;  height: 4px; }
+.toggle[data-size="Small"] .toggle__line { top: 6px;  height: 4px; }
+
+/* Gray-track states: line uses spirits-700 to match pip */
+.toggle[data-state="off"]           .toggle__line { background-color: var(--color-spirits-700); }
+.toggle[data-state="partial-left"]  .toggle__line { background-color: var(--color-spirits-700); }
+
+/* ─── Pip ────────────────────────────────────────────────────────────────
+   4 × 4 px ring ("O" symbol) — sits behind the knob (z-index 0).
+   Always on the right side; becomes hidden when the knob covers it.
+   Ellipse 381 (bright ring) = partial resting, partial-right, on
+   Ellipse 382 (dim ring)    = off, partial-left                          */
+.toggle__pip {
+  position:         absolute;
+  width:            var(--toggle-pip-size);
+  height:           var(--toggle-pip-size);
+  border-radius:    50%;
+  background-color: transparent;
+  border:           1px solid var(--color-spirits-700);    /* dim ring — Ellipse 382 */
+  box-sizing:       border-box;
+  z-index:          0;
+  pointer-events:   none;
+  transition: border-color var(--toggle-t-color) var(--ease-standard);
+}
+
+/* Pip positions — fixed at right side in all states; only color changes.
+   Knob naturally covers it in the ON state (knob at 22px spans 22–38px). */
+.toggle[data-size="Large"] .toggle__pip { left: 32px; top: 8px; }
+.toggle[data-size="Small"] .toggle__pip { left: 32px; top: 6px; }
+
+/* Bright ring (Ellipse 381) — colored track states */
+.toggle[data-state="partial"]       .toggle__pip,
+.toggle[data-state="partial-right"] .toggle__pip,
+.toggle[data-state="on"]            .toggle__pip { border-color: var(--color-white); }
+
+/* ─── Knob ───────────────────────────────────────────────────────────────
+   Slides horizontally on a spring. Sits above the pip (z-index 1).     */
+.toggle__knob {
+  position:         absolute;
+  top:              var(--toggle-knob-pad);   /* 2px */
+  border-radius:    var(--toggle-knob-radius);
+  background-color: var(--color-white);
+  z-index:          1;
+  pointer-events:   none;
+  transition:
+    left             var(--toggle-t-slide) var(--ease-spring),
+    box-shadow       var(--toggle-t-glow)  var(--ease-standard),
+    background-color var(--toggle-t-color) var(--ease-standard);
+}
+
+/* Knob sizes */
+.toggle[data-size="Large"] .toggle__knob { width: var(--toggle-knob-lg); height: var(--toggle-knob-lg); }
+.toggle[data-size="Small"] .toggle__knob { width: var(--toggle-knob-sm); height: var(--toggle-knob-sm); }
+
+/* Knob X positions — Large
+   off=2  partial=12  partial-left=7  partial-right=17  on=22             */
+.toggle[data-size="Large"][data-state="off"]           .toggle__knob { left:  2px; }
+.toggle[data-size="Large"][data-state="partial"]       .toggle__knob { left: 12px; }
+.toggle[data-size="Large"][data-state="partial-left"]  .toggle__knob { left:  7px; }
+.toggle[data-size="Large"][data-state="partial-right"] .toggle__knob { left: 17px; }
+.toggle[data-size="Large"][data-state="on"]            .toggle__knob { left: 22px; }
+
+/* Knob X positions — Small
+   off=2  partial=14  partial-left=9  partial-right=19  on=26             */
+.toggle[data-size="Small"][data-state="off"]           .toggle__knob { left:  2px; }
+.toggle[data-size="Small"][data-state="partial"]       .toggle__knob { left: 14px; }
+.toggle[data-size="Small"][data-state="partial-left"]  .toggle__knob { left:  9px; }
+.toggle[data-size="Small"][data-state="partial-right"] .toggle__knob { left: 19px; }
+.toggle[data-size="Small"][data-state="on"]            .toggle__knob { left: 26px; }
+
+/* Disabled knob */
+.toggle:disabled .toggle__knob { background-color: var(--color-spirits-500); }
+
+/* Hover glow — 2px ring on cursor over */
+.toggle:not(:disabled):hover .toggle__knob {
+  box-shadow: 0 0 0 2px rgba(252, 252, 253, 0.25);
+}
+
+/* Focus glow — 5px ring, keyboard-only via :focus-visible */
+.toggle:focus-visible .toggle__knob {
+  box-shadow: 0 0 0 5px rgba(252, 252, 253, 0.25);
+}

@@ -1,0 +1,127 @@
+:root {
+  --tag-input-bg:              var(--color-bg-surface);
+  --tag-input-border:          var(--color-border-default);
+  --tag-input-border-focus:    var(--color-border-primary);
+  --tag-input-border-error:    var(--color-border-danger);
+  --tag-input-radius:          var(--radius-sm);
+  --tag-input-gap:             var(--space-2);
+
+  --tag-input-height-lg:       48px;
+  --tag-input-padding-lg:      var(--space-2) var(--space-3) var(--space-2) var(--space-3);
+
+  --tag-input-height-md:       40px;
+  --tag-input-padding-md:      var(--space-2) var(--space-3) var(--space-2) var(--space-3);
+
+  --tag-input-label-size:      13px;
+  --tag-input-label-color:     var(--color-text-secondary);
+  --tag-input-label-gap:       var(--space-1);
+
+  --tag-input-placeholder-color: var(--color-text-muted);
+  --tag-input-text-color:      var(--color-text-primary);
+
+  --tag-input-helper-size:     11px;
+  --tag-input-helper-color:    var(--color-text-muted);
+  --tag-input-helper-error-color: var(--color-text-danger);
+}
+
+/* ── Root wrapper ── */
+.tag-input__root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tag-input-label-gap);
+}
+
+/* ── Label ── */
+.tag-input__label {
+  display: block;
+  font-family: var(--font-text);
+  font-size: var(--tag-input-label-size);
+  font-weight: var(--font-weight-medium);
+  line-height: 16px;
+  color: var(--tag-input-label-color);
+}
+
+.tag-input__required {
+  color: var(--color-text-danger);
+}
+
+/* ── Container ── */
+.tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--tag-input-gap);
+  min-height: var(--tag-input-height-lg);
+  padding: var(--tag-input-padding-lg);
+  background: var(--tag-input-bg);
+  border: 1px solid var(--tag-input-border);
+  border-radius: var(--tag-input-radius);
+  cursor: text;
+  transition: border-color 150ms var(--ease-standard),
+              box-shadow 150ms var(--ease-standard);
+}
+
+.tag-input--medium {
+  min-height: var(--tag-input-height-md);
+  padding: var(--tag-input-padding-md);
+}
+
+.tag-input--focused {
+  border-color: var(--tag-input-border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.tag-input--error {
+  border-color: var(--tag-input-border-error);
+}
+
+.tag-input--error.tag-input--focused {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 12%, transparent);
+}
+
+.tag-input--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Text input ── */
+.tag-input__input {
+  flex: 1;
+  min-width: 80px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  line-height: 16px;
+  color: var(--tag-input-text-color);
+  padding: 0;
+}
+
+.tag-input--medium .tag-input__input {
+  font-family: var(--font-micro);
+  font-size: 11px;
+}
+
+.tag-input__input::placeholder {
+  color: var(--tag-input-placeholder-color);
+}
+
+.tag-input__input:disabled {
+  cursor: not-allowed;
+}
+
+/* ── Helper / Error text ── */
+.tag-input__helper {
+  margin: 0;
+  font-family: var(--font-micro);
+  font-size: var(--tag-input-helper-size);
+  line-height: 16px;
+  color: var(--tag-input-helper-color);
+}
+
+.tag-input__helper--error {
+  color: var(--tag-input-helper-error-color);
+}

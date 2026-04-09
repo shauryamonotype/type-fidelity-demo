@@ -1,0 +1,513 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   InputField — Design tokens
+   Source: Antiqua Design System v1.0 · node 16441:927
+───────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --if-bg:          var(--color-bg-raised);        /* light: #ffffff,  dark: #1e242c */
+  --if-bg-disabled: var(--color-spirits-200);     /* light: #e7eaee,  dark: #576579 */
+
+  /* Border colours */
+  --if-border-default: var(--color-border-default);  /* light: #dbdfe5, dark: #667488 */
+  --if-border-blue:    var(--color-blue-duck-500);   /* light: #1a73e8, dark: #1766cf */
+  --if-border-red:     var(--color-red-500);         /* light: #dc0024, dark: #c40020 */
+
+  /* Text colours */
+  --if-text-900: var(--color-text-primary);   /* light: #1e242c, dark: #f9fafb  — label, input filled */
+  --if-text-800: var(--color-spirits-800);    /* light: #313945, dark: #f3f4f6  — input filled active  */
+  --if-text-600: var(--color-text-muted);     /* light: #667488, dark: #dbdfe5  — placeholder, helper  */
+
+  /* Focus rings — blue (rgba stays stable; blue-duck-500 is blue in both modes) */
+  --if-ring-focus:       0px 0px 0px 2px rgba(26, 115, 232, 0.24);
+  --if-ring-focus-hover: 0px 0px 0px 4px rgba(26, 115, 232, 0.16);
+
+  /* Error border colours
+     idle (unfocused) → soft tint  — error is present but not being acted on
+     active (focused) → full red   — user is actively addressing the error    */
+  --if-border-error-idle:   var(--color-red-300);  /* light: #eaa1a3 (soft pink), dark: #6a1629 */
+  --if-border-error-active: var(--color-red-500);  /* light: #dc0024, dark: #c40020            */
+
+  /* Error focus rings — red */
+  --if-ring-error-focus: 0px 0px 0px 2px rgba(219, 0, 36, 0.16);
+  --if-ring-error-hover: 0px 0px 0px 4px rgba(219, 0, 36, 0.16);
+
+  /* Typography */
+  --if-font:                var(--font-text);
+  --if-text-sm:             13px;
+  --if-text-base:           16px;
+  --if-lh-sm:               16px;
+  --if-lh-base:             24px;
+  --if-fw-regular:          400;
+  --if-fw-medium:           500;
+
+  /* Layout */
+  --if-h-large:             48px;
+  --if-h-medium:            40px;
+  --if-radius:              8px;
+  --if-px:                  16px;
+  --if-py-large:            12px;
+  --if-py-medium:           8px;
+  --if-gap-label:           4px;
+  --if-gap-below:           8px;
+
+  /* ── Animation timing ─────────────────────────────────────────────────────
+     Each timing is intentional and maps to a specific interaction:
+
+     t-border  180 ms  Border colour change (default ↔ hover ↔ error).
+                       Long enough to be visible, short enough to feel snappy.
+
+     t-ring    220 ms  Focus ring expand/collapse.
+                       Slightly slower so the halo feels like it "settles".
+
+     t-ring-grow 140 ms  Ring 2 px → 4 px while already focused+hovered.
+                         Fast because it's a micro-expansion on an existing ring.
+
+     t-color    160 ms  Label / char colour changes.
+
+     t-clear   180 ms  Clear button slide-in from the right.
+
+     t-helper  200 ms  Helper / error text fade + slide in from above.
+
+     t-char     45 ms  Per-character slide-in / slide-out in the overlay.
+                       Must be short so rapid typing stays crisp.
+
+     ease-emerge  cubic-bezier(0.0, 0.0, 0.2, 1.0)
+       "Decelerate" — starts fast, eases to rest. Used for things appearing.
+
+     ease-recede  cubic-bezier(0.4, 0.0, 1.0, 1.0)
+       "Accelerate" — starts slow, exits fast. Used for things disappearing.
+
+     ease-standard cubic-bezier(0.4, 0.0, 0.2, 1.0)
+       Material-style standard easing for colour/border transitions.
+  ────────────────────────────────────────────────────────────────────────── */
+  --if-t-border:            180ms;
+  --if-t-ring:              220ms;
+  --if-t-ring-grow:         140ms;
+  --if-t-color:             160ms;
+  --if-t-clear:             180ms;
+  --if-t-helper:            200ms;
+  --if-t-char:               75ms;
+
+  --if-ease-emerge:         cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --if-ease-recede:         cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --if-ease-standard:       cubic-bezier(0.4, 0.0, 0.2, 1.0);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Keyframes
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Character enters: slides up 4 px and fades in */
+@keyframes charSlideIn {
+  from { opacity: 0; transform: translateY(4px);  }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Character exits: slides up 4 px and fades out */
+@keyframes charSlideOut {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+/* Focus ring emerges: ring expands from 0 to its resting spread.
+   The slight overshoot (120 % → 100 %) makes it feel tactile.         */
+@keyframes focusRingEmerge {
+  0%   { box-shadow: 0px 0px 0px 0px  rgba(26, 115, 232, 0.00); }
+  60%  { box-shadow: 0px 0px 0px 3px  rgba(26, 115, 232, 0.28); }
+  100% { box-shadow: var(--if-ring-focus); }
+}
+
+
+/* Error focus ring emerges when user clicks into an error field */
+@keyframes errorFocusRingEmerge {
+  0%   { box-shadow: 0px 0px 0px 0px rgba(219, 0, 36, 0.00); }
+  60%  { box-shadow: 0px 0px 0px 3px rgba(219, 0, 36, 0.20); }
+  100% { box-shadow: var(--if-ring-error-focus); }
+}
+
+/* Clear button slides in from the right */
+@keyframes clearSlideIn {
+  from { opacity: 0; transform: translateX(10px) scale(0.85); }
+  to   { opacity: 1; transform: translateX(0)    scale(1);    }
+}
+
+/* Helper text descends into view */
+@keyframes helperSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Helper text slides back up and fades out */
+@keyframes helperSlideOut {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+/* Clear button slides out to the right */
+@keyframes clearSlideOut {
+  from { opacity: 1; transform: translateX(0)    scale(1);    }
+  to   { opacity: 0; transform: translateX(10px) scale(0.85); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Root
+───────────────────────────────────────────────────────────────────────────── */
+.input-field {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--if-gap-below);
+  position:       relative;
+  width:          100%;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Label
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__label {
+  display:     flex;
+  gap:         var(--if-gap-label);
+  align-items: center;
+  flex-shrink: 0;
+  font-family: var(--if-font);
+  font-size:   var(--if-text-sm);
+  font-weight: var(--if-fw-medium);
+  line-height: var(--if-lh-sm);
+  color:       var(--if-text-900);
+  transition:  color var(--if-t-color) var(--if-ease-standard);
+  cursor:      default;
+  user-select: none;
+}
+
+.input-field__label--error {
+  color: var(--if-border-red);
+}
+
+.input-field__required {
+  color: var(--if-border-red);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Wrapper  (the visible "box")
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__wrapper {
+  background:    var(--if-bg);
+  position:      relative;
+  border-radius: var(--if-radius);
+  flex-shrink:   0;
+  width:         100%;
+  /* bg transition supports the disabled state colour change */
+  transition:    background var(--if-t-border) var(--if-ease-standard);
+}
+
+.input-field__wrapper--large  { height: var(--if-h-large);  }
+.input-field__wrapper--medium { height: var(--if-h-medium); }
+
+.input-field__wrapper--disabled {
+  background: var(--if-bg-disabled);
+  cursor:     not-allowed;
+}
+
+.input-field__inner {
+  display:        flex;
+  flex-direction: row;
+  align-items:    center;
+  overflow:       clip;
+  border-radius:  inherit;
+  width:          100%;
+  height:         100%;
+}
+
+.input-field__content {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 8px 0 var(--if-px);
+  position:        relative;
+  width:           100%;
+  height:          100%;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Text area  (native input + animated overlay stacked)
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__text-area {
+  display:     flex;
+  flex:        1 0 0;
+  align-items: center;
+  min-height:  1px;
+  min-width:   1px;
+  position:    relative;
+}
+
+/* Native <input> — invisible text, visible caret */
+.input-field__input {
+  width:       100%;
+  background:  transparent;
+  border:      none;
+  outline:     none;
+  font-family: var(--if-font);
+  color:       transparent;       /* chars rendered by overlay */
+  caret-color: var(--if-text-900);
+  transition:  caret-color var(--if-t-color) var(--if-ease-standard);
+}
+
+.input-field__input--large  {
+  font-size:   var(--if-text-base);
+  line-height: var(--if-lh-base);
+}
+
+.input-field__input--medium {
+  font-size:   var(--if-text-sm);
+  line-height: var(--if-lh-sm);
+}
+
+.input-field__input::placeholder {
+  color:      var(--if-text-600);
+  opacity:    1;
+  transition: color var(--if-t-color) var(--if-ease-standard),
+              opacity var(--if-t-color) var(--if-ease-standard);
+}
+
+/* Placeholder fades out on focus so the caret has a clean canvas */
+.input-field__input:focus::placeholder {
+  opacity: 0;
+}
+
+/* error state: caret + placeholder use red-babe-500 */
+.input-field__input--error {
+  caret-color: var(--if-border-red);
+}
+
+.input-field__input--error::placeholder {
+  color: var(--if-border-red);
+}
+
+.input-field__input--disabled {
+  cursor: not-allowed;
+}
+
+/* ── Animated character overlay ──────────────────────────────────────────── */
+.input-field__overlay {
+  position:       absolute;
+  inset:          0;
+  display:        flex;
+  align-items:    center;
+  pointer-events: none;
+  overflow:       hidden;
+  white-space:    nowrap;
+  font-family:    var(--if-font);
+}
+
+.input-field__overlay--large  { font-size: var(--if-text-base); line-height: var(--if-lh-base); }
+.input-field__overlay--medium { font-size: var(--if-text-sm);   line-height: var(--if-lh-sm);   }
+
+.input-field__char {
+  display: inline-block;
+  color:   var(--if-text-800);
+  transition: color var(--if-t-color) var(--if-ease-standard);
+}
+
+.input-field__char--error { color: var(--if-border-red); }
+
+/* Data-attribute-driven animations keep inline-style free */
+.input-field__char[data-new] {
+  animation: charSlideIn var(--if-t-char) var(--if-ease-emerge) both;
+}
+.input-field__char[data-exiting] {
+  animation: charSlideOut var(--if-t-char) var(--if-ease-recede) both;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Actions  (clear button)
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__actions {
+  display:     flex;
+  gap:         8px;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.input-field__clear {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           28px;
+  height:          28px;
+  background:      var(--color-spirits-100);
+  border:          none;
+  border-radius:   calc(var(--if-radius) - 2px);
+  padding:         6px;
+  cursor:          pointer;
+  color:           var(--if-text-600);
+  /* Opacity + scale for the visible state */
+  transition:      opacity  var(--if-t-clear) var(--if-ease-emerge),
+                   color    120ms             linear,
+                   background 120ms           linear;
+}
+
+.input-field__clear:hover {
+  background: var(--color-spirits-200);
+  color:      var(--if-text-900);
+}
+
+.input-field__clear:active {
+  background: var(--color-spirits-300);
+}
+
+/* Slide in from the right when the field gains a value */
+.input-field__clear--visible {
+  opacity:   1;
+  animation: clearSlideIn var(--if-t-clear) var(--if-ease-emerge) both;
+}
+
+.input-field__clear--exiting {
+  animation:      clearSlideOut var(--if-t-clear) var(--if-ease-recede) both;
+  pointer-events: none;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Border overlay  (state-driven, sits above the background)
+
+   All interactive transitions are listed explicitly so the intent is clear.
+   box-shadow carries the focus rings; border-color carries the state colour.
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__border {
+  position:       absolute;
+  inset:          0;
+  border:         1px solid transparent;
+  border-radius:  var(--if-radius);
+  pointer-events: none;
+
+  /* border-color  — changes when state changes (hover/error/default)    */
+  /* box-shadow    — carries the focus ring; eases out on emerge          */
+  transition:
+    border-color var(--if-t-border) var(--if-ease-standard),
+    box-shadow   var(--if-t-ring)   var(--if-ease-emerge);
+}
+
+/* ── State: default ── */
+.input-field__border--default {
+  border-color: var(--if-border-default);
+  box-shadow:   none;
+}
+
+/* ── State: hovered (not focused) ──
+   Border turns blue; no ring yet. */
+.input-field__border--hovered {
+  border-color: var(--if-border-blue);
+  box-shadow:   none;
+}
+
+/* ── State: focused (not hovered) ──
+   box-shadow + transition (inherited from base) keeps hover-in/out smooth. */
+.input-field__border--focused {
+  border-color: var(--if-border-blue);
+  box-shadow:   var(--if-ring-focus);
+  animation:    none;
+}
+
+/* ── State: focused + hovered ──
+   Ring grows from 2 px to 4 px. Separate, faster transition on box-shadow. */
+.input-field__border--focused-hovered {
+  border-color: var(--if-border-blue);
+  box-shadow:   var(--if-ring-focus-hover);
+  transition:
+    border-color var(--if-t-border)    var(--if-ease-standard),
+    box-shadow   var(--if-t-ring-grow) var(--if-ease-emerge);
+}
+
+/* ── State: error, idle (not focused, not hovered) ──
+   Soft pink — present but not demanding attention. */
+.input-field__border--error {
+  border-color: var(--if-border-error-idle);
+  box-shadow:   none;
+  transition:
+    border-color var(--if-t-border) var(--if-ease-standard),
+    box-shadow   var(--if-t-ring)   var(--if-ease-emerge);
+}
+
+/* ── State: error + hovered (Large, not focused) ──
+   Hover on Large escalates to full red — no ring yet, just the stronger border. */
+.input-field__border--error-hover-large {
+  border-color: var(--if-border-error-active);
+  box-shadow:   none;
+  transition:
+    border-color var(--if-t-border) var(--if-ease-standard),
+    box-shadow   var(--if-t-ring)   var(--if-ease-emerge);
+}
+
+/* ── State: error + hovered (Medium, not focused) ──
+   Hover on Medium now also escalates to full red — no ring yet, just the stronger border. */
+.input-field__border--error-hover-medium {
+  border-color: var(--if-border-error-active);
+  box-shadow:   none;
+  transition:
+    border-color var(--if-t-border) var(--if-ease-standard),
+    box-shadow   var(--if-t-ring)   var(--if-ease-emerge);
+}
+
+/* ── State: error + focused (not hovered) ──
+   Full red + 2 px ring — box-shadow + transition for smooth hover behaviour. */
+.input-field__border--error-focused {
+  border-color: var(--if-border-error-active);
+  box-shadow:   var(--if-ring-error-focus);
+  animation:    none;
+}
+
+/* ── State: error + focused + hovered ──
+   Full red + 4 px ring — ring expands as it does for blue focused-hovered. */
+.input-field__border--error-hovered {
+  border-color: var(--if-border-error-active);
+  box-shadow:   var(--if-ring-error-hover);
+  transition:
+    border-color var(--if-t-border)    var(--if-ease-standard),
+    box-shadow   var(--if-t-ring-grow) var(--if-ease-emerge);
+}
+
+/* ── State: disabled ── */
+.input-field__border--disabled {
+  border-color: var(--if-border-default);
+  box-shadow:   none;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Below-field area  (error message / helper text)
+───────────────────────────────────────────────────────────────────────────── */
+.input-field__below {
+  position: relative;
+  width:    100%;
+  height:   0;          /* takes no layout space — helper floats below */
+}
+
+.input-field__helper {
+  position:    absolute;
+  top:         4px;
+  left:        0;
+  width:       100%;
+  font-family: var(--if-font);
+  font-size:   var(--if-text-sm);
+  font-weight: var(--if-fw-regular);
+  line-height: var(--if-lh-sm);
+  white-space: pre-wrap;
+}
+
+.input-field__helper--neutral { color: var(--if-text-600);    }
+.input-field__helper--error   { color: var(--if-border-red);  }
+
+.input-field__helper--entering {
+  animation: helperSlideIn var(--if-t-helper) var(--if-ease-emerge) both;
+}
+
+.input-field__helper--exiting {
+  animation: helperSlideOut var(--if-t-helper) var(--if-ease-recede) both;
+}

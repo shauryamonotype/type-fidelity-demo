@@ -1,0 +1,271 @@
+@import '../../tokens.css';
+
+/* ─── Cell container ─────────────────────────────────────────────────────────── */
+/* .tc is detected by Table.css to strip the td's default padding.               */
+/* Each cell type manages its own height, alignment, and internal spacing.        */
+
+.tc {
+  display:     flex;
+  align-items: center;
+  height:      var(--tc-row-height, 56px);
+  padding:     0 var(--space-4);   /* 16px — standard cell indent */
+  box-sizing:  border-box;
+  overflow:    hidden;
+}
+
+/* User cell: extra room for avatar */
+.tc--user {
+  padding: 0 var(--space-4);
+  gap:     var(--space-4);
+}
+
+/* User cell: the UserCell takes all remaining space */
+.tc__user-fill {
+  flex:      1 0 0;
+  min-width: 0;
+  overflow:  hidden;
+}
+
+/* Badge pill — right side of user cell (e.g. "Temp", "External") */
+.tc__badge {
+  flex-shrink:   0;
+  background:    var(--color-spirits-100);
+  border:        0.823px solid var(--color-spirits-400);
+  border-radius: var(--radius-full);
+  padding:       2px var(--space-2);
+  font-family:   var(--font-micro);
+  font-size:     9px;
+  font-weight:   var(--font-weight-medium);
+  line-height:   16px;
+  color:         var(--color-spirits-900);
+  text-transform: uppercase;
+  white-space:   nowrap;
+}
+
+/* Status cell: centred badge */
+.tc--status {
+  padding: 0 var(--space-4);
+}
+
+/* Action cell: text button + icon button, left-aligned, 8px all-around cell padding.
+   Figma spec: cell has 8px padding; text button has 8px padding on all sides;
+   if all buttons are Text type (no Default/Ghost), buttons have no gap between them. */
+.tc--action {
+  justify-content: flex-start;
+  gap: 0;
+  padding: var(--space-2); /* 8px */
+}
+
+/* Text button inside action cell gets 8px on all sides (overrides size-class padding) */
+.tc--action .btn--text {
+  padding: var(--space-2); /* 8px */
+}
+
+/* Dropdown cell: no extra padding — trigger provides its own visual inset.
+   overflow: visible so the portal's fixed-position panel can escape any clip ancestor. */
+.tc--dropdown {
+  padding:  0;
+  overflow: visible;
+}
+
+/* ─── Dropdown cell: Figma accuracy overrides ─────────────────────────────── */
+
+/* Trigger fills the full td width and full 56px cell height, flat edges */
+.tc--dropdown .dropdown--cell {
+  width:  100%;
+  height: 100%;
+}
+.tc--dropdown .dropdown__trigger--cell {
+  width:           100%;
+  height:          100%;
+  padding:         0 var(--space-4); /* 16px — matches standard cell indent */
+  justify-content: space-between;
+  border-radius:   0;
+}
+
+/* Chevron hidden by default; revealed on hover / focused / open */
+.tc--dropdown .dropdown__chevron--cell {
+  opacity:    0;
+  transition: opacity 120ms linear;
+}
+.tc--dropdown .dropdown__trigger--cell:hover    .dropdown__chevron--cell,
+.tc--dropdown .dropdown__trigger--cell-hovered  .dropdown__chevron--cell,
+.tc--dropdown .dropdown__trigger--cell-open     .dropdown__chevron--cell,
+.tc--dropdown .dropdown__trigger--cell:focus-visible .dropdown__chevron--cell {
+  opacity: 1;
+}
+
+/* Hover: blue-duck-50 across the full cell; cancel the trigger-level pill bg */
+.tc--dropdown:hover {
+  background: var(--color-blue-duck-50);
+}
+.tc--dropdown .dropdown__trigger--cell:hover,
+.tc--dropdown .dropdown__trigger--cell-hovered {
+  background: transparent;
+}
+
+/* Focused / open: blue border + focus ring, no radius */
+.tc--dropdown .dropdown__trigger--cell:focus-visible,
+.tc--dropdown .dropdown__trigger--cell-open {
+  background:    transparent;
+  outline:       none;
+  border:        1px solid var(--color-blue-duck-500);
+  box-shadow:    0 0 0 2px rgba(26, 115, 232, 0.24);
+  border-radius: 0;
+}
+
+/* Editable cell — InputField rendered flush inside a table cell.
+   Label + below-field area are suppressed; shape tokens overridden to
+   square corners so the input fits the cell context. All interaction
+   behaviour (clear button, char animation, focus ring) is inherited
+   from InputField and will stay in sync automatically. */
+.tc--editable {
+  padding:  0;
+  overflow: visible; /* allow InputField border + focus ring to render without clipping */
+  /* Square corners: override InputField's --if-radius token */
+  --if-radius: 0;
+}
+
+/* InputField root: fill the cell, remove the label↔input gap */
+.tc--editable .input-field {
+  gap:    0;
+  height: 100%;
+}
+
+/* Hide the label row — not needed in a cell context */
+.tc--editable .input-field__label {
+  display: none;
+}
+
+/* Hide below-field area — errors shown via border colour only */
+.tc--editable .input-field__below {
+  display: none;
+}
+
+/* Wrapper fills cell height; no left/right padding so it sits edge-to-edge */
+.tc--editable .input-field__wrapper {
+  height: 100%;
+}
+
+/* Default state: blend with the table (borderless until focused/hovered) */
+.tc--editable .input-field__border--default,
+.tc--editable .input-field__border--disabled {
+  border-color: transparent;
+}
+
+/* Loading cells — restore standard padding for the skeleton bars */
+.tc--loading {
+  padding: 0 var(--space-4);
+}
+
+/* ─── Text cell ──────────────────────────────────────────────────────────────── */
+
+.table-cell__text {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.table-cell__text-primary {
+  font-family:  var(--font-text);
+  font-size:    13px;
+  font-weight:  var(--font-weight-medium);
+  line-height:  16px;
+  color:        var(--color-text-primary);
+  white-space:  nowrap;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+.table-cell__text-secondary {
+  font-family:  var(--font-micro);
+  font-size:    11px;
+  font-weight:  var(--font-weight-regular);
+  line-height:  16px;
+  color:        var(--color-text-secondary);
+  white-space:  nowrap;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Editable cell ──────────────────────────────────────────────────────────── */
+
+.table-cell__input {
+  width:        100%;
+  height:       100%;
+  border:       1px solid transparent;
+  border-radius: var(--radius-xs);
+  background:   transparent;
+  padding:      0 var(--space-2);
+  font-family:  var(--font-text);
+  font-size:    13px;
+  font-weight:  var(--font-weight-regular);
+  line-height:  16px;
+  color:        var(--color-text-primary);
+  outline:      none;
+  transition:   border-color 150ms var(--ease-standard),
+                background   150ms var(--ease-standard);
+}
+
+.table-cell__input:hover {
+  border-color: var(--color-border-default);
+}
+
+.table-cell__input:focus {
+  border-color: var(--color-border-primary);
+  background:   var(--color-bg-surface);
+}
+
+.table-cell__input--error {
+  border-color: var(--color-border-danger);
+  background:   var(--color-bg-danger-subtle);
+  color:        var(--color-text-danger);
+}
+
+/* ─── Loading skeletons ──────────────────────────────────────────────────────── */
+
+@keyframes tc-shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(300%); }
+}
+
+.tc-skeleton-bar,
+.tc-skeleton-circle {
+  background:    var(--color-spirits-200);
+  border-radius: var(--radius-xs);
+  flex-shrink:   0;
+  overflow:      hidden;
+  position:      relative;
+}
+
+.tc-skeleton-circle {
+  border-radius: var(--radius-full);
+}
+
+.tc-skeleton-bar::after,
+.tc-skeleton-circle::after {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: tc-shimmer 1.4s ease-in-out infinite;
+}
+
+/* User loading — text block next to the circle */
+.tc-skeleton-text-block {
+  display:        flex;
+  flex:           1 0 0;
+  flex-direction: column;
+  gap:            4px;
+  min-width:      0;
+}
+
+.tc-skeleton-row {
+  display: flex;
+  gap:     var(--space-2);
+}

@@ -1,0 +1,134 @@
+@import '../../tokens.css';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   StatusBadge
+   Status pill aligned to Figma node 3094-1069 (Next-Gen Component Library).
+   Font: Micro / Medium / 9px (M2) / 16px line-height / uppercase
+───────────────────────────────────────────────────────────────────────────── */
+
+.status-badge {
+  display:         inline-flex;
+  align-items:     center;
+  padding:         2px 8px;
+  font-family:     var(--font-micro);
+  font-size:       9px;
+  font-weight:     var(--font-weight-medium);
+  line-height:     16px;
+  letter-spacing:  0;
+  text-transform:  uppercase;
+  white-space:     nowrap;
+  user-select:     none;
+}
+
+/* ─── Shape ──────────────────────────────────────────────────────────────── */
+
+/* Status type: square-ish corners, no border */
+.status-badge--status {
+  border-radius: var(--radius-xs);   /* 4px */
+}
+
+/* Informational type: pill corners, 0.823px border */
+.status-badge--informational {
+  border-radius: var(--radius-full);
+  border:        0.823px solid transparent;
+}
+
+/* ─── Figma "Status" type colours ────────────────────────────────────────── */
+
+.status-badge--critical {
+  background: var(--color-red-100);
+  color:      var(--color-red-600);
+}
+
+.status-badge--warning {
+  background: var(--color-yellow-100);
+  color:      var(--color-yellow-800);
+}
+
+.status-badge--all-good {
+  background: var(--color-green-100);
+  color:      var(--color-green-700);
+}
+
+.status-badge--ready {
+  background: var(--color-blue-duck-100);
+  color:      var(--color-blue-duck-700);
+}
+
+.status-badge--in-progress {
+  background: var(--color-purple-100);
+  color:      var(--color-purple-700);
+}
+
+.status-badge--neutral {
+  background: var(--color-spirits-200);
+  color:      var(--color-spirits-900);
+}
+
+/* ─── Figma "Informational" type colours ─────────────────────────────────── */
+
+.status-badge--new {
+  background:   var(--color-blue-duck-50);
+  color:        var(--color-blue-duck-700);
+  border-color: var(--color-blue-duck-200);
+}
+
+.status-badge--variable {
+  background:   var(--color-purple-50);
+  color:        var(--color-purple-600);
+  border-color: var(--color-purple-200);
+}
+
+.status-badge--custom {
+  background:   var(--color-magneton-100);
+  color:        var(--color-magneton-600);
+  border-color: var(--color-magneton-200);
+}
+
+.status-badge--info {
+  background:   var(--color-spirits-100);
+  color:        var(--color-spirits-900);
+  border-color: var(--color-spirits-400);
+}
+
+/* ─── Legacy user-status values ──────────────────────────────────────────── */
+
+.status-badge--active,
+.status-badge--published {
+  background: var(--color-green-100);
+  color:      var(--color-green-700);
+}
+
+.status-badge--inactive,
+.status-badge--deactivated,
+.status-badge--expired {
+  background: var(--color-yellow-100);
+  color:      var(--color-yellow-800);
+}
+
+.status-badge--invited {
+  background:   var(--color-blue-duck-50);
+  color:        var(--color-blue-duck-700);
+  border-color: var(--color-blue-duck-200);
+}
+
+.status-badge--pending {
+  background: var(--color-yellow-100);
+  color:      var(--color-yellow-800);
+}
+
+.status-badge--draft {
+  background:   var(--color-spirits-100);
+  color:        var(--color-spirits-900);
+  border-color: var(--color-spirits-400);
+}
+
+.status-badge--archived {
+  background: var(--color-spirits-200);
+  color:      var(--color-spirits-900);
+}
+
+.status-badge--failed {
+  background: var(--color-red-100);
+  color:      var(--color-red-600);
+}

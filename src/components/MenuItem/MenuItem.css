@@ -1,0 +1,233 @@
+@import '../../tokens.css';
+
+/* ─── Tokens ──────────────────────────────────────────────────────────────── */
+
+:root {
+  --mi-bg-hover:    var(--color-blue-duck-50);   /* #f2f5fd */
+  --mi-bd-hover:    var(--color-blue-duck-100);  /* #e4e9fa */
+  --mi-bg-selected: var(--color-blue-duck-100);  /* #e4e9fa */
+  --mi-bd-selected: var(--color-blue-duck-200);  /* #c6d2f6 */
+  --mi-bd-focus:    var(--color-primary);        /* #1a73e8 */
+  --mi-text:        var(--color-text-primary);
+  --mi-text-muted:  var(--color-text-muted);     /* #9ea6ac — Figma "Light Gray" */
+  --mi-icon:        #9ea6ac;                     /* "Light Gray" — exact Figma value */
+  --mi-radius:      var(--radius-sm);            /* 8px */
+  --mi-pad:         var(--space-3);              /* 12px */
+  --mi-gap:         var(--space-3);              /* 12px */
+  --mi-icon-size:   16px;
+  --mi-dur:         120ms;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+
+.menu-item {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  width:           100%;
+  padding:         var(--mi-pad);
+  background:      transparent;
+  border:          1px solid transparent;
+  border-radius:   var(--mi-radius);
+  cursor:          pointer;
+  text-align:      left;
+  color:           var(--mi-text);
+  transition:
+    background   var(--mi-dur) var(--ease-standard),
+    border-color var(--mi-dur) var(--ease-standard);
+}
+
+/* Dual info: more vertical padding to accommodate the subhead row */
+.menu-item--dual-info {
+  align-items: center;
+}
+
+/* ─── States ──────────────────────────────────────────────────────────────── */
+
+.menu-item:hover:not(.menu-item--selected) {
+  background:   var(--mi-bg-hover);
+  border-color: var(--mi-bd-hover);
+}
+
+.menu-item:focus-visible {
+  outline:      none;
+  border-color: var(--mi-bd-focus);
+  border-width: 2px;
+}
+
+.menu-item--selected {
+  background:   var(--mi-bg-selected);
+  border-color: var(--mi-bd-selected);
+}
+
+/* ─── Left slot ───────────────────────────────────────────────────────────── */
+
+.menu-item__left {
+  display:     flex;
+  align-items: center;
+  gap:         var(--mi-gap);
+  flex:        1;
+  min-width:   0;
+}
+
+.menu-item__icon {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  width:           var(--mi-icon-size);
+  height:          var(--mi-icon-size);
+  color:           var(--mi-icon);
+}
+
+/* ─── Text block (label + optional subhead) ─────────────────────────────── */
+
+.menu-item__text {
+  display:   flex;
+  flex-direction: column;
+  flex:      1;
+  min-width: 0;
+}
+
+.menu-item__label {
+  color:          var(--mi-text);
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+/* B2/Regular — 13px / 16px — muted */
+.menu-item__subhead {
+  font-family:  var(--font-micro);
+  font-size:    11px;
+  font-weight:  var(--font-weight-regular);
+  line-height:  16px;
+  color:        var(--mi-text-muted);
+  white-space:  nowrap;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Right slot (value + chevron) ─────────────────────────────────────── */
+
+.menu-item__right {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             4px;
+  flex-shrink:     0;
+  margin-left:     var(--mi-gap);
+  color:           var(--mi-icon);
+}
+
+/* Value text — M1/Regular */
+.menu-item__value {
+  font-family: var(--font-micro);
+  font-size:   11px;
+  font-weight: var(--font-weight-regular);
+  line-height: 16px;
+  color:       var(--mi-text-muted);
+  white-space: nowrap;
+}
+
+/* Shortcut hint — M1/Regular, same muted colour as value */
+.menu-item__shortcut {
+  font-family: var(--font-micro);
+  font-size:   11px;
+  font-weight: var(--font-weight-regular);
+  line-height: 16px;
+  color:       var(--mi-icon);
+  white-space: nowrap;
+}
+
+/* ─── Variant: danger ─────────────────────────────────────────────────────── */
+
+.menu-item--danger .menu-item__label {
+  color: var(--color-danger);
+}
+
+.menu-item--danger .menu-item__icon,
+.menu-item--danger .menu-item__right {
+  color: var(--color-danger);
+}
+
+.menu-item--danger:hover:not(:disabled) {
+  background-color: var(--color-red-25);
+  border-color:     var(--color-red-100);
+}
+
+/* ─── Variant: disabled ───────────────────────────────────────────────────── */
+
+.menu-item:disabled {
+  cursor:         not-allowed;
+  pointer-events: none;
+  opacity:        0.4;
+}
+
+/* ─── Multi-select checkbox visual ─────────────────────────────────────────── */
+
+.menu-item__cb {
+  position:         relative;
+  flex-shrink:      0;
+  width:            16px;
+  height:           16px;
+  border-radius:    4px;
+  background-color: transparent;
+  border:           1.3px solid var(--color-spirits-600);
+  overflow:         hidden;
+  transition:
+    background-color 150ms var(--ease-standard),
+    border-color     150ms var(--ease-standard);
+}
+
+.menu-item__cb--filled {
+  background-color: var(--color-blue-duck-500);
+  border-color:     transparent;
+}
+
+/* Blue border on hover when unchecked */
+.menu-item:hover:not(.menu-item--selected) .menu-item__cb:not(.menu-item__cb--filled) {
+  border-color: var(--color-blue-duck-500);
+}
+
+.menu-item__cb-icon {
+  position: absolute;
+  inset:    0;
+  width:    100%;
+  height:   100%;
+}
+
+/* Checkmark — drawn with stroke-dashoffset */
+.menu-item__cb-check path {
+  stroke-dasharray:  14;
+  stroke-dashoffset: 14;
+  opacity:           0;
+  transition:
+    stroke-dashoffset 110ms var(--ease-recede),
+    opacity           110ms var(--ease-recede);
+}
+
+.menu-item__cb--checked .menu-item__cb-check path {
+  stroke-dashoffset: 0;
+  opacity:           1;
+  transition:
+    stroke-dashoffset 220ms var(--ease-emerge),
+    opacity            80ms var(--ease-emerge);
+}
+
+/* Dash — indeterminate */
+.menu-item__cb-dash path {
+  transform-origin: center;
+  transform:        scaleX(0);
+  opacity:          0;
+  transition:
+    transform 110ms var(--ease-recede),
+    opacity   110ms var(--ease-recede);
+}
+
+.menu-item__cb--partial .menu-item__cb-dash path {
+  transform: scaleX(1);
+  opacity:   1;
+  transition:
+    transform 180ms var(--ease-emerge),
+    opacity    80ms var(--ease-emerge);
+}

@@ -1,0 +1,349 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Table — Antiqua Design System
+   Reskinned from TanStack React Table.
+   All values reference global tokens from tokens.css.
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Table tokens ──────────────────────────────────────────────────────── */
+
+  --table-bg-header:        var(--color-bg-surface);
+
+  --table-border-color:     var(--color-border-default);
+
+  --table-th-color:         var(--color-text-secondary);
+  --table-td-color:         var(--color-text-primary);
+
+  --table-row-height:       56px;
+  --table-th-height:        48px;
+
+  --table-font:             var(--font-text);
+  --table-font-micro:       var(--font-micro);
+  --table-font-size:        13px;   /* B2 */
+  --table-line-height:      16px;
+
+  /* Sort icon: single colour, opacity controls active vs inactive state */
+  --table-sort-color:        var(--color-text-muted);   /* matches Figma */
+
+  --table-checkbox-size:    16px;
+  --table-checkbox-border:  var(--color-spirits-600);
+  --table-checkbox-bg:      var(--color-blue-duck-500);
+
+  --table-badge-radius:     4px;
+  --table-badge-height:     24px;
+
+  --table-avatar-size:      36px;
+  --table-avatar-radius:    50%;
+
+  --table-kebab-color:      var(--color-icon-muted);
+  --table-kebab-hover-bg:   var(--color-bg-page);
+
+  /* ── Row entrance animation ───────────────────────────────────────────────── */
+  --table-row-enter-dur:     260ms;
+  --table-row-enter-stagger: 30ms;
+  --table-row-enter-y:       8px;
+}
+
+
+
+/* ── Row entrance keyframe ────────────────────────────────────────────────── */
+
+@keyframes table-row-in {
+  from {
+    opacity:   0;
+    transform: translateY(var(--table-row-enter-y));
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ── Outer container ──────────────────────────────────────────────────────── */
+
+.table-outer {
+  position: relative;
+  width: 100%;
+}
+
+
+/* ── Sticky header ────────────────────────────────────────────────────────── */
+/* Lives as a sibling of .table-wrapper (not inside it) so position:sticky
+   resolves to .dev-content, not to the clipped body container.             */
+
+.table-sticky-header {
+  position:      sticky;
+  top:           0;
+  z-index:       2;
+  background:    var(--table-bg-header);
+  border:        1px solid var(--table-border-color);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  /* No overflow: hidden — the <th> cells' backgrounds fill the full rectangular
+     area including the corner triangles, covering any rows that scroll behind
+     the header. overflow: hidden would clip th backgrounds to the rounded shape
+     and leave the corner triangle areas transparent (rows show through). */
+  transition:    box-shadow 150ms var(--ease-standard);
+}
+
+.table-sticky-header--scrolled {
+  border-radius: 0;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+}
+
+
+/* ── Wrapper (body only) ──────────────────────────────────────────────────── */
+
+.table-wrapper {
+  position:      relative;
+  width:         100%;
+  border:        1px solid var(--table-border-color);
+  border-top:    none;   /* header provides the shared top/separator border */
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm); /* bottom corners only — header is a sibling above */
+  background:    var(--table-row-bg);
+  overflow:      hidden; /* clips rows to all rounded corners; safe — no sticky child */
+}
+
+
+
+/* ── Table element ────────────────────────────────────────────────────────── */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--table-font);
+  font-size: var(--table-font-size);
+  line-height: var(--table-line-height);
+  color: var(--table-td-color);
+}
+
+
+/* ── Header row ───────────────────────────────────────────────────────────── */
+
+.table__head-row {
+  background: var(--table-bg-header);
+}
+
+/* Round the corner cells to match the header container's border-radius at rest.
+   When scrolled, the container loses its radius so these have no effect. */
+.table__head-row th:first-child { border-top-left-radius:  calc(var(--radius-sm) - 1px); }
+.table__head-row th:last-child  { border-top-right-radius: calc(var(--radius-sm) - 1px); }
+tbody .table-row:last-child td:first-child { border-bottom-left-radius:  calc(var(--radius-sm) - 1px); }
+tbody .table-row:last-child td:last-child  { border-bottom-right-radius: calc(var(--radius-sm) - 1px); }
+
+/* Sortable header hover background — TableHeaderCell.css doesn't set this */
+.table .thc--sortable:hover {
+  background: var(--color-bg-page);
+}
+
+/* Checkbox header cell — centre the Checkbox within the 48px cell */
+.table--selectable .thc:first-child .thc__inner {
+  justify-content: center;
+}
+
+.table--selectable .thc:first-child .thc__label {
+  flex: none;
+}
+
+/* <th> borders — owned by Table, not by TableHeaderCell */
+/* border-bottom is omitted: the .table-sticky-header div's own border-bottom
+   provides the header/body separator, avoiding a doubled 2px line. */
+.table .thc {
+  border-right: 1px solid var(--table-border-color);
+}
+
+.table .thc:last-child {
+  border-right: none;
+}
+
+/* All other header labels: explicitly left-aligned */
+.table .thc__label {
+  text-align: left;
+}
+
+/* Default padding for cells that render plain content (no TableCell).
+   TableCell (.tc) provides its own 16px padding internally. */
+.table .table-row__cell {
+  padding: 0 var(--space-4);
+}
+
+.table .table-row__cell:has(.tc) {
+  padding: 0;
+}
+
+
+
+/* ── Body rows ────────────────────────────────────────────────────────────── */
+/* Row background, stripe, hover, selected — all from TableRow.css (.table-row).
+   Only table-specific overrides live here. */
+
+/* Last row: remove bottom border so it doesn't double with the wrapper */
+tbody .table-row:last-child .table-row__cell {
+  border-bottom: none;
+}
+
+/* Checkbox body cell — horizontally centred */
+.table--selectable .table-row__cell:first-child {
+  text-align: center;
+}
+
+/* Row entrance animation — stagger via --row-index CSS var on the <tr> */
+.table .table-row__cell {
+  animation: table-row-in var(--table-row-enter-dur) var(--ease-emerge)
+    calc(var(--row-index, 0) * var(--table-row-enter-stagger)) both;
+}
+
+
+
+/* ── UserCell ─────────────────────────────────────────────────────────────── */
+
+.table-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.table-user-avatar {
+  width:    var(--table-avatar-size);
+  height:   var(--table-avatar-size);
+  border-radius: var(--table-avatar-radius);
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--color-spirits-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-user-avatar--invited {
+  background:   var(--color-blue-duck-50);
+  border:       2px dashed var(--color-spirits-600);
+  overflow:     visible;
+}
+
+.table-user-avatar__img {
+  width:       100%;
+  height:      100%;
+  object-fit:  cover;
+  border-radius: var(--table-avatar-radius);
+  display:     block;
+}
+
+.table-user-avatar__initials {
+  font-family:  var(--table-font);
+  font-size:    13px;
+  font-weight:  500;
+  line-height:  1;
+  color:        var(--color-blue-duck-900);
+}
+
+.table-user-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  min-width:      0;
+}
+
+.table-user-info__row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+}
+
+.table-user-info__name {
+  font-family:     var(--table-font);
+  font-size:       13px;
+  font-weight:     500;
+  line-height:     16px;
+  color:           var(--color-text-primary);
+  text-decoration: underline;
+  white-space:     nowrap;
+  overflow:        hidden;
+  text-overflow:   ellipsis;
+  cursor:          pointer;
+}
+
+.table-user-info__name--muted {
+  color:           var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.table-user-info__email {
+  font-family:   var(--table-font-micro);
+  font-size:     11px;
+  font-weight:   400;
+  line-height:   16px;
+  color:         var(--color-text-secondary);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ── Badges ───────────────────────────────────────────────────────────────── */
+
+.table-badge {
+  display:     inline-flex;
+  align-items: center;
+  height:      var(--table-badge-height);
+  padding:     0 8px;
+  border-radius: var(--table-badge-radius);
+  font-family: var(--table-font-micro);
+  font-size:   11px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.table-badge--green {
+  background: var(--color-green-100);
+  color:      var(--color-green-600);
+}
+
+.table-badge--orange {
+  background: var(--color-orange-100);
+  color:      var(--color-orange-600);
+}
+
+.table-badge--blue {
+  background: var(--color-blue-duck-100);
+  color:      var(--color-blue-duck-700);
+}
+
+
+/* ── Kebab menu button ────────────────────────────────────────────────────── */
+
+.table-kebab {
+  display:     inline-flex;
+  align-items: center;
+  justify-content: center;
+  width:       28px;
+  height:      28px;
+  border:      none;
+  background:  transparent;
+  border-radius: var(--radius-sm);
+  color:       var(--table-kebab-color);
+  cursor:      pointer;
+  flex-shrink: 0;
+  transition:
+    background  150ms var(--ease-standard),
+    color       150ms var(--ease-standard);
+}
+
+.table-kebab:hover {
+  background: var(--table-kebab-hover-bg);
+  color:      var(--color-text-primary);
+}
+
+
+
+/* ── Pause row animation during column resize ────────────────────────────── */
+/* animation-play-state: paused holds cells in place without restarting the  */
+/* animation when resize ends — unlike animation: none which would restart it */
+
+.table--resizing .table-row__cell {
+  animation-play-state: paused;
+}

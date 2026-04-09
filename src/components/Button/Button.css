@@ -1,0 +1,217 @@
+/* ── Design tokens ──────────────────────────────────────── */
+:root {
+  --corner-radii-corner-8px: 8px;
+
+  /* Spacing */
+  --spacing-4px:  4px;
+  --spacing-8px:  8px;
+  --spacing-12px: 12px;
+  --spacing-16px: 16px;
+
+  /* Blue — adapts via blue-duck palette */
+  --btn-fill-blue:        var(--color-blue-duck-500);
+  --btn-fill-blue-hover:  var(--color-blue-duck-600);
+  --btn-fill-blue-active: var(--color-blue-duck-700);
+  --btn-content-blue:     var(--color-text-on-brand);
+
+  /* Dark grey — inverts via spirits (dark→light in dark mode) */
+  --btn-fill-darkgrey:        var(--color-spirits-800);
+  --btn-fill-darkgrey-hover:  var(--color-spirits-900);
+  --btn-fill-darkgrey-active: var(--color-spirits-950);
+  --btn-content-darkgrey:     var(--color-spirits-25);
+
+  /* Light grey — inverts via spirits (light→dark in dark mode) */
+  --btn-fill-lightgrey:        var(--color-spirits-100);
+  --btn-fill-lightgrey-hover:  var(--color-spirits-200);
+  --btn-fill-lightgrey-active: var(--color-spirits-300);
+  --btn-content-lightgrey:     var(--color-spirits-800);
+
+  /* White — uses spirits-25 so it inverts in dark mode */
+  --btn-fill-white:        var(--color-spirits-25);
+  --btn-fill-white-hover:  var(--color-spirits-100);
+  --btn-fill-white-active: var(--color-spirits-200);
+  --btn-content-white:     var(--color-spirits-800);
+
+  /* Magenta — adapts via magneton palette */
+  --btn-fill-magenta:        var(--color-magneton-500);
+  --btn-fill-magenta-hover:  var(--color-magneton-600);
+  --btn-fill-magenta-active: var(--color-magneton-700);
+  --btn-content-magenta:     var(--color-text-on-brand);
+
+  /* Red — adapts via red-babe palette */
+  --btn-fill-red:        var(--color-red-500);
+  --btn-fill-red-hover:  var(--color-red-600);
+  --btn-fill-red-active: var(--color-red-700);
+  --btn-content-red:     var(--color-text-on-brand);
+
+  /* Green — adapts via turtle-green palette */
+  --btn-fill-green:        var(--color-green-500);
+  --btn-fill-green-hover:  var(--color-green-600);
+  --btn-fill-green-active: var(--color-green-700);
+  --btn-content-green:     var(--color-text-on-brand);
+
+  /* Yellow — adapts via taco-yellow palette */
+  --btn-fill-yellow:        var(--color-yellow-500);
+  --btn-fill-yellow-hover:  var(--color-yellow-600);
+  --btn-fill-yellow-active: var(--color-yellow-700);
+  --btn-content-yellow:     var(--color-spirits-950);
+
+  /* Purple — adapts via sweet-purple palette */
+  --btn-fill-purple:        var(--color-purple-500);
+  --btn-fill-purple-hover:  var(--color-purple-600);
+  --btn-fill-purple-active: var(--color-purple-700);
+  --btn-content-purple:     var(--color-text-on-brand);
+}
+
+/* ── Base button ────────────────────────────────────────── */
+.btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  border:          none;
+  border-radius:   var(--corner-radii-corner-8px);
+  cursor:          pointer;
+  font-family:     var(--font-text);
+  font-weight:     var(--font-weight-medium);
+  letter-spacing:  -0.02em;
+  gap:             8px;
+  transition:      background-color 0.15s, color 0.15s, border-color 0.15s;
+  white-space:     nowrap;
+  text-decoration: none;
+  outline-offset:  2px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid currentColor;
+}
+
+/* ── Sizes ──────────────────────────────────────────────── */
+.btn--large {
+  height:      48px;
+  padding:     var(--spacing-12px) var(--spacing-16px);
+  font-size:   16px;
+  line-height: 24px;
+}
+
+.btn--medium {
+  height:      40px;
+  padding:     var(--spacing-8px) var(--spacing-16px);
+  font-size:   14px;
+  line-height: 20px;
+}
+
+.btn--small {
+  height:      32px;
+  padding:     var(--spacing-4px) var(--spacing-12px);
+  font-size:   12px;
+  line-height: 16px;
+}
+
+/* ── Icon wrapper ───────────────────────────────────────── */
+.btn__icon {
+  display:     inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn--large  .btn__icon { width: 20px; height: 20px; }
+.btn--medium .btn__icon { width: 16px; height: 16px; }
+.btn--small  .btn__icon { width: 14px; height: 14px; }
+
+/* ═══════════════════════════════════════════════════════════
+   TYPE: DEFAULT (filled)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Blue */
+.btn--default.btn--blue { background: var(--btn-fill-blue); color: var(--btn-content-blue); }
+.btn--default.btn--blue:hover:not(:disabled) { background: var(--btn-fill-blue-hover); }
+.btn--default.btn--blue:active:not(:disabled) { background: var(--btn-fill-blue-active); }
+
+/* Dark grey */
+.btn--default.btn--darkgrey { background: var(--btn-fill-darkgrey); color: var(--btn-content-darkgrey); }
+.btn--default.btn--darkgrey:hover:not(:disabled) { background: var(--btn-fill-darkgrey-hover); }
+.btn--default.btn--darkgrey:active:not(:disabled) { background: var(--btn-fill-darkgrey-active); }
+
+/* Light grey */
+.btn--default.btn--lightgrey { background: var(--btn-fill-lightgrey); color: var(--btn-content-lightgrey); }
+.btn--default.btn--lightgrey:hover:not(:disabled) { background: var(--btn-fill-lightgrey-hover); }
+.btn--default.btn--lightgrey:active:not(:disabled) { background: var(--btn-fill-lightgrey-active); }
+
+/* White */
+.btn--default.btn--white { background: var(--btn-fill-white); color: var(--btn-content-white); }
+.btn--default.btn--white:hover:not(:disabled) { background: var(--btn-fill-white-hover); }
+.btn--default.btn--white:active:not(:disabled) { background: var(--btn-fill-white-active); }
+
+/* Magenta */
+.btn--default.btn--magenta { background: var(--btn-fill-magenta); color: var(--btn-content-magenta); }
+.btn--default.btn--magenta:hover:not(:disabled) { background: var(--btn-fill-magenta-hover); }
+.btn--default.btn--magenta:active:not(:disabled) { background: var(--btn-fill-magenta-active); }
+
+/* Red */
+.btn--default.btn--red { background: var(--btn-fill-red); color: var(--btn-content-red); }
+.btn--default.btn--red:hover:not(:disabled) { background: var(--btn-fill-red-hover); }
+.btn--default.btn--red:active:not(:disabled) { background: var(--btn-fill-red-active); }
+
+/* Green */
+.btn--default.btn--green { background: var(--btn-fill-green); color: var(--btn-content-green); }
+.btn--default.btn--green:hover:not(:disabled) { background: var(--btn-fill-green-hover); }
+.btn--default.btn--green:active:not(:disabled) { background: var(--btn-fill-green-active); }
+
+/* Yellow */
+.btn--default.btn--yellow { background: var(--btn-fill-yellow); color: var(--btn-content-yellow); }
+.btn--default.btn--yellow:hover:not(:disabled) { background: var(--btn-fill-yellow-hover); }
+.btn--default.btn--yellow:active:not(:disabled) { background: var(--btn-fill-yellow-active); }
+
+/* Purple */
+.btn--default.btn--purple { background: var(--btn-fill-purple); color: var(--btn-content-purple); }
+.btn--default.btn--purple:hover:not(:disabled) { background: var(--btn-fill-purple-hover); }
+.btn--default.btn--purple:active:not(:disabled) { background: var(--btn-fill-purple-active); }
+
+/* ═══════════════════════════════════════════════════════════
+   TYPE: GHOST (outlined)
+   ═══════════════════════════════════════════════════════════ */
+.btn--ghost {
+  background:    transparent;
+  border:        1.5px solid currentColor;
+}
+
+.btn--ghost.btn--blue      { color: var(--btn-fill-blue); }
+.btn--ghost.btn--darkgrey  { color: var(--btn-fill-darkgrey); }
+.btn--ghost.btn--lightgrey { color: var(--btn-content-lightgrey); border-color: var(--btn-fill-lightgrey-active); }
+.btn--ghost.btn--white     { color: var(--btn-fill-white); }
+.btn--ghost.btn--magenta   { color: var(--btn-fill-magenta); }
+.btn--ghost.btn--red       { color: var(--btn-fill-red); }
+.btn--ghost.btn--green     { color: var(--btn-fill-green); }
+.btn--ghost.btn--yellow    { color: var(--btn-fill-yellow); }
+.btn--ghost.btn--purple    { color: var(--btn-fill-purple); }
+
+.btn--ghost:hover:not(:disabled)  { background: rgba(0,0,0,0.05); }
+.btn--ghost:active:not(:disabled) { background: rgba(0,0,0,0.10); }
+
+/* ═══════════════════════════════════════════════════════════
+   TYPE: TEXT (no background / border)
+   ═══════════════════════════════════════════════════════════ */
+.btn--text {
+  background: transparent;
+}
+
+.btn--text.btn--blue      { color: var(--btn-fill-blue); }
+.btn--text.btn--darkgrey  { color: var(--btn-fill-darkgrey); }
+.btn--text.btn--lightgrey { color: var(--btn-content-lightgrey); }
+.btn--text.btn--white     { color: var(--btn-fill-white); }
+.btn--text.btn--magenta   { color: var(--btn-fill-magenta); }
+.btn--text.btn--red       { color: var(--btn-fill-red); }
+.btn--text.btn--green     { color: var(--btn-fill-green); }
+.btn--text.btn--yellow    { color: var(--btn-fill-yellow); }
+.btn--text.btn--purple    { color: var(--btn-fill-purple); }
+
+.btn--text:hover:not(:disabled)  { background: color-mix(in srgb, currentColor 8%, transparent); }
+.btn--text:active:not(:disabled) { background: color-mix(in srgb, currentColor 14%, transparent); }
+
+/* ── Deactivated state ──────────────────────────────────── */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor:  not-allowed;
+  pointer-events: none;
+}

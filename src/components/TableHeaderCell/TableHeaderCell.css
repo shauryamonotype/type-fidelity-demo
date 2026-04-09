@@ -1,0 +1,123 @@
+@import '../../tokens.css';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TableHeaderCell
+   Semantic <th> with 48px height, sort icon, and resize handle.
+   Background: spirits-50 (#f9fafb). Border: right only.
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --thc-height:         48px;
+  --thc-bg:             var(--color-spirits-50);
+  --thc-text:           var(--color-text-muted);
+  --thc-border:         var(--color-border-default);
+  --thc-resizer-w:      4px;
+  --thc-resizer-color:  var(--color-border-primary);
+  --thc-sort-muted:     0.35;
+}
+
+.thc {
+  position:        relative;
+  height:          var(--thc-height);
+  background:      var(--thc-bg);
+  padding:         0;
+  box-sizing:      border-box;
+  user-select:     none;
+  white-space:     nowrap;
+  overflow:        hidden;
+  text-align:      left;
+  /* Borders are applied by the Table component, not by this component */
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inner layout — label + sort icon
+───────────────────────────────────────────────────────────────────────────── */
+
+.thc__inner {
+  display:      flex;
+  align-items:  center;
+  gap:          6px;
+  height:       100%;
+  padding:      0 16px;
+}
+
+.thc__label {
+  font-family:  var(--font-text);
+  font-size:    13px;
+  font-weight:  var(--font-weight-medium);
+  line-height:  16px;
+  color:        var(--thc-text);
+  flex:         1 1 0;
+  min-width:    0;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Sort icon wrapper
+───────────────────────────────────────────────────────────────────────────── */
+
+.thc__sort {
+  flex-shrink:  0;
+  display:      flex;
+  align-items:  center;
+  color:        var(--thc-text);
+  opacity:      0;
+  transition:   opacity 120ms var(--ease-standard);
+}
+
+/* Show icon when column is sortable and row is hovered */
+.thc--sortable:hover .thc__sort,
+.thc__sort--active {
+  opacity: 1 !important;
+}
+
+.thc__sort-icon {
+  display: block;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Sortable cursor
+───────────────────────────────────────────────────────────────────────────── */
+
+.thc--sortable {
+  cursor: pointer;
+}
+
+.thc--sortable:hover .thc__label {
+  color: var(--color-text-primary);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Resize handle — 4px draggable strip on the right edge
+───────────────────────────────────────────────────────────────────────────── */
+
+.thc__resizer {
+  position:   absolute;
+  top:        0;
+  right:      0;
+  width:      var(--thc-resizer-w);
+  height:     100%;
+  cursor:     col-resize;
+  z-index:    1;
+  background: transparent;
+  transition: background 120ms var(--ease-standard);
+}
+
+.thc__resizer:hover,
+.thc__resizer--active {
+  background: var(--thc-resizer-color);
+}
+
+/* While resizing: highlight the whole column header */
+.thc--resizing {
+  background: var(--color-blue-duck-50);
+}
+
+.thc--resizing .thc__label {
+  color: var(--color-text-primary);
+}

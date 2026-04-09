@@ -1,0 +1,736 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Antiqua Design System — Global Tokens
+   Source: Figma › Antiqua Design System v1.0
+
+   Import this file in any layout:
+     @import '../tokens.css';
+
+   Components use their own scoped tokens (locked). New layouts and features
+   should always reference these globals instead of hardcoding values.
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* Tell the browser this document supports both colour schemes.
+     Scrollbars, form controls and browser UI adapt automatically. */
+  color-scheme: light dark;
+
+  /* ── Font families ────────────────────────────────────────────────────────*/
+  /* Three optical-size variants of Helvetica Now — use the right one per scale */
+  --font-display: "Helvetica Now MT Disp",  Helvetica, Arial, sans-serif;  /* Hero + H1–H4  */
+  --font-text:    "Helvetica Now MT Text",  Helvetica, Arial, sans-serif;  /* H5–H7 + B1–B2 */
+  --font-micro:   "Helvetica Now MT Micro", Helvetica, Arial, sans-serif;  /* M1–M2         */
+  --font-family:  var(--font-text); /* default alias */
+
+
+  /* ── Colour palettes ──────────────────────────────────────────────────────*/
+  /* All values sourced from Figma › Primitives variable collection.          */
+  /* Light mode values below; dark mode overrides in the block at end of file.*/
+
+  /* Spirits — neutral greys */
+  --color-spirits-25:   #fcfcfd;
+  --color-spirits-50:   #f9fafb;
+  --color-spirits-100:  #f3f4f6;
+  --color-spirits-200:  #e7eaee;
+  --color-spirits-300:  #dbdfe5;
+  --color-spirits-400:  #cfd5dd;
+  --color-spirits-500:  #c3cad4;
+  --color-spirits-600:  #667488;
+  --color-spirits-700:  #576579;
+  --color-spirits-800:  #313945;
+  --color-spirits-900:  #1e242c;
+  --color-spirits-950:  #0e1013;
+
+  /* Blue Duck — primary brand blue */
+  --color-blue-duck-25:   #f8f9fd;
+  --color-blue-duck-50:   #f2f5fd;
+  --color-blue-duck-100:  #e4e9fa;
+  --color-blue-duck-200:  #c6d2f6;
+  --color-blue-duck-300:  #a2b8f1;
+  --color-blue-duck-400:  #749aed;
+  --color-blue-duck-500:  #1a73e8;
+  --color-blue-duck-600:  #1766cf;
+  --color-blue-duck-700:  #1459b3;
+  --color-blue-duck-800:  #104892;
+  --color-blue-duck-900:  #0b3367;
+  --color-blue-duck-950:  #082449;
+
+  /* Magneton — magenta / marketing */
+  --color-magneton-25:    #fdf8f9;
+  --color-magneton-50:    #fbf2f4;
+  --color-magneton-100:   #f7e4ea;
+  --color-magneton-200:   #efc6d3;
+  --color-magneton-300:   #e6a3b9;
+  --color-magneton-400:   #de769b;
+  --color-magneton-500:   #d52377;
+  --color-magneton-600:   #be1f6a;
+  --color-magneton-700:   #a41b5c;
+  --color-magneton-800:   #86164b;
+  --color-magneton-900:   #5f0f35;
+  --color-magneton-950:   #430b25;
+
+  /* Turtle Green — success */
+  --color-green-25:   #f8fbf9;
+  --color-green-50:   #f2f7f4;
+  --color-green-100:  #e4efe8;
+  --color-green-200:  #c6dfd0;
+  --color-green-300:  #a3cdb4;
+  --color-green-400:  #76ba93;
+  --color-green-500:  #26a568;
+  --color-green-600:  #21935d;
+  --color-green-700:  #1d7f50;
+  --color-green-800:  #186841;
+  --color-green-900:  #10492e;
+  --color-green-950:  #0c3420;
+
+  /* Red Babe — errors & destructive */
+  --color-red-25:   #fdf8f8;
+  --color-red-50:   #fbf1f2;
+  --color-red-100:  #f8e4e4;
+  --color-red-200:  #f1c5c6;
+  --color-red-300:  #eaa1a3;
+  --color-red-400:  #e37276;
+  --color-red-500:  #dc0024;
+  --color-red-600:  #c40020;
+  --color-red-700:  #aa001b;
+  --color-red-800:  #8b0016;
+  --color-red-900:  #620010;
+  --color-red-950:  #45000b;
+
+  /* Sweet Purple — accents */
+  --color-purple-25:   #f9f9fc;
+  --color-purple-50:   #f3f3f9;
+  --color-purple-100:  #e8e8f3;
+  --color-purple-200:  #cfcfe7;
+  --color-purple-300:  #b2b2db;
+  --color-purple-400:  #8f90ce;
+  --color-purple-500:  #6263c0;
+  --color-purple-600:  #5758ab;
+  --color-purple-700:  #4b4c94;
+  --color-purple-800:  #3d3e79;
+  --color-purple-900:  #2b2c55;
+  --color-purple-950:  #1e1f3c;
+
+  /* Taco Yellow — warnings */
+  --color-yellow-25:   #fffcf2;
+  --color-yellow-50:   #fff8e4;
+  --color-yellow-100:  #fff1c9;
+  --color-yellow-200:  #ffe494;
+  --color-yellow-300:  #ffd65e;
+  --color-yellow-400:  #ffc929;
+  --color-yellow-500:  #f2b500;
+  --color-yellow-600:  #c29100;
+  --color-yellow-700:  #916d00;
+  --color-yellow-800:  #614800;
+  --color-yellow-900:  #302400;
+  --color-yellow-950:  #181200;
+
+  /* Orange Squash */
+  --color-orange-25:   #fdfbf9;
+  --color-orange-50:   #fcf6f2;
+  --color-orange-100:  #faebe2;
+  --color-orange-200:  #f2d8c6;
+  --color-orange-300:  #ebbfa1;
+  --color-orange-400:  #e39f72;
+  --color-orange-500:  #dc5800;
+  --color-orange-600:  #c54f00;
+  --color-orange-700:  #aa4400;
+  --color-orange-800:  #8b3800;
+  --color-orange-900:  #622700;
+  --color-orange-950:  #461c00;
+
+  /* Absolutes */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+
+  /* ── Semantic colour aliases ──────────────────────────────────────────────*/
+  /* These reference primitives above — they automatically adapt in dark mode. */
+
+  /* Brand */
+  --color-primary:        var(--color-blue-duck-500);
+  --color-primary-hover:  var(--color-blue-duck-700);
+  --color-primary-subtle: var(--color-blue-duck-100);
+
+  /* Status */
+  --color-danger:         var(--color-red-500);
+  --color-success:        var(--color-green-500);
+  --color-warning:        var(--color-yellow-500);
+
+  /* ── Text ─────────────────────────────────────────────────────────────────*/
+  --color-text-primary:   var(--color-spirits-900);
+  --color-text-secondary: var(--color-spirits-700);
+  --color-text-muted:     var(--color-spirits-600);
+  --color-text-disabled:  var(--color-spirits-400);
+  --color-text-on-brand:  var(--color-white);       /* text on coloured bg   */
+  --color-text-danger:    var(--color-red-500);
+  --color-text-success:   var(--color-green-500);
+  --color-text-warning:   var(--color-yellow-600);
+  --color-text-link:      var(--color-blue-duck-500);
+  --color-text-link-hover: var(--color-blue-duck-700);
+
+  /* ── Icon ─────────────────────────────────────────────────────────────────*/
+  --color-icon-default:   var(--color-spirits-700);
+  --color-icon-muted:     var(--color-spirits-500);
+  --color-icon-on-brand:  var(--color-white);
+  --color-icon-danger:    var(--color-red-500);
+  --color-icon-success:   var(--color-green-500);
+  --color-icon-warning:   var(--color-yellow-600);
+
+  /* ── Background ───────────────────────────────────────────────────────────*/
+  --color-bg-page:         var(--color-spirits-100); /* outermost app bg     */
+  --color-bg-surface:      var(--color-spirits-50);  /* card / panel         */
+  --color-bg-raised:       var(--color-white);       /* modal / popover      */
+  --color-bg-overlay:      var(--color-spirits-25);  /* hover tint           */
+  --color-bg-primary:      var(--color-blue-duck-500);
+  --color-bg-primary-hover: var(--color-blue-duck-700);
+  --color-bg-primary-subtle: var(--color-blue-duck-50);
+  --color-bg-danger:       var(--color-red-500);
+  --color-bg-danger-subtle: var(--color-red-50);
+  --color-bg-success:      var(--color-green-500);
+  --color-bg-success-subtle: var(--color-green-50);
+  --color-bg-warning:      var(--color-yellow-500);
+  --color-bg-warning-subtle: var(--color-yellow-50);
+
+  /* ── Border ───────────────────────────────────────────────────────────────*/
+  --color-border:          var(--color-spirits-300); /* alias kept for compat */
+  --color-border-default:  var(--color-spirits-300);
+  --color-border-strong:   var(--color-spirits-500);
+  --color-border-primary:  var(--color-blue-duck-500);
+  --color-border-danger:   var(--color-red-500);
+  --color-border-success:  var(--color-green-500);
+  --color-border-warning:  var(--color-yellow-500);
+
+  /* ── Legacy surface aliases (kept for compat) ─────────────────────────────*/
+  --color-surface:        var(--color-bg-surface);
+  --color-surface-raised: var(--color-bg-raised);
+
+  /* ── Table row backgrounds ─────────────────────────────────────────────────*/
+  --table-row-bg:          var(--color-bg-raised);   /* odd rows  */
+  --table-row-bg-alt:      var(--color-bg-surface);  /* even rows */
+  --table-row-bg-selected: var(--color-blue-duck-50);
+
+  --table-row-height: 56px;
+  --tc-row-height:    56px; /* alias used by TableRow.css */
+
+
+  /* ── Spacing scale ────────────────────────────────────────────────────────*/
+
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-14:  56px;
+  --space-16:  64px;
+
+
+  /* ── Border radius ────────────────────────────────────────────────────────*/
+
+  --radius-none: 0;
+  --radius-xs:   4px;
+  --radius-sm:   8px;   /* buttons, inputs */
+  --radius-md:   12px;
+  --radius-lg:   16px;  /* cards, modals */
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+
+  /* ── Font weights ─────────────────────────────────────────────────────────*/
+
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-bold:     700;
+  --font-weight-xbold:    800;
+
+
+  /* ── Typography scale ─────────────────────────────────────────────────────*/
+  /*
+    Source: Figma › Antiqua Design System v1.0 › Type Scale (node 1:2)
+    Minor-third ratio (×1.2). letterSpacing in Figma units → converted to px.
+
+    DISPLAY  — font-family: var(--font-display)  "Helvetica Now MT Disp"
+    ─────────────────────────────────────────────────────────────────────
+    Hero1   99px  800  lh:104  ls:-1%
+    Hero2   83px  800  lh: 88  ls:-1%
+    Hero3   69px  800  lh: 80  ls:-1%   (Bold variant ls:0)
+    H1      57px  700  lh: 64  ls:-2%   (Medium variant ls:0)
+    H2      48px  700  lh: 56  ls: 0
+    H3      40px  700  lh: 48  ls:-2%   (Medium variant ls:0)
+    H4      33px  700  lh: 40  ls: 0
+
+    SUBHEADINGS  — font-family: var(--font-text)  "Helvetica Now MT Text"
+    ─────────────────────────────────────────────────────────────────────
+    H5      28px  700/500/400  lh:32  ls:-1% / 0 / 0
+    H6      23px  700/500/400  lh:32  ls:-1% / 0 / 0
+    H7      19px  700/500/400  lh:32  ls:-1% / 0 / 0
+
+    BODY  — font-family: var(--font-text)  "Helvetica Now MT Text"
+    ─────────────────────────────────────────────────────────────────────
+    B1      16px  700/500/400  lh:24  ls:-2% / -2% / 0
+    B2      13px  700/500/400  lh:16  ls: 0
+
+    MICRO  — font-family: var(--font-micro)  "Helvetica Now MT Micro"
+    ─────────────────────────────────────────────────────────────────────
+    M1      11px  500/400      lh:16  ls: 0
+    M2       9px  400          lh:16  ls: 0
+  */
+
+  /* Hero */
+  --text-hero1-size:        99px;
+  --text-hero1-weight:      800;
+  --text-hero1-line-height: 104px;
+  --text-hero1-tracking:    -0.01em;
+
+  --text-hero2-size:        83px;
+  --text-hero2-weight:      800;
+  --text-hero2-line-height: 88px;
+  --text-hero2-tracking:    -0.01em;
+
+  --text-hero3-size:        69px;
+  --text-hero3-weight:      800;
+  --text-hero3-line-height: 80px;
+  --text-hero3-tracking:    -0.01em;
+
+  /* H1–H4 (MT Disp) */
+  --text-h1-size:        57px;
+  --text-h1-line-height: 64px;
+  --text-h1-tracking-bold:   -0.02em;
+  --text-h1-tracking-medium:  0;
+
+  --text-h2-size:        48px;
+  --text-h2-line-height: 56px;
+  --text-h2-tracking:    0;
+
+  --text-h3-size:        40px;
+  --text-h3-line-height: 48px;
+  --text-h3-tracking-bold:   -0.02em;
+  --text-h3-tracking-medium:  0;
+
+  --text-h4-size:        33px;
+  --text-h4-line-height: 40px;
+  --text-h4-tracking:    0;
+
+  /* H5–H7 (MT Text) */
+  --text-h5-size:        28px;
+  --text-h5-line-height: 32px;
+  --text-h5-tracking-bold:   -0.01em;
+  --text-h5-tracking-medium:  0;
+
+  --text-h6-size:        23px;
+  --text-h6-line-height: 32px;
+  --text-h6-tracking-bold:   -0.01em;
+  --text-h6-tracking-medium:  0;
+
+  --text-h7-size:        19px;
+  --text-h7-line-height: 32px;
+  --text-h7-tracking-bold:   -0.01em;
+  --text-h7-tracking-medium:  0;
+
+  /* B1–B2 (MT Text) */
+  --text-b1-size:        16px;
+  --text-b1-line-height: 24px;
+  --text-b1-tracking-bold:    -0.02em;
+  --text-b1-tracking-medium:  -0.02em;
+  --text-b1-tracking-regular:  0;
+
+  --text-b2-size:        13px;
+  --text-b2-line-height: 16px;
+  --text-b2-tracking:    0;
+
+  /* M1–M2 (MT Micro) */
+  --text-m1-size:        11px;
+  --text-m1-line-height: 16px;
+  --text-m1-tracking:    0;
+
+  --text-m2-size:        9px;
+  --text-m2-line-height: 16px;
+  --text-m2-tracking:    0;
+
+
+  /* ── Easing ───────────────────────────────────────────────────────────────*/
+
+  --ease-emerge:   cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-recede:   cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1.0);
+
+}
+
+
+/* ── Dark mode ────────────────────────────────────────────────────────────────
+   Overrides primitive palette tokens only. Semantic aliases (--color-primary,
+   --color-text-primary, etc.) cascade automatically through var() references.
+   Source: Figma › Dark.tokens.json — "Master colors" variable collection.
+──────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Spirits — inverted: low stops = dark surfaces, high stops = light text */
+    --color-spirits-25:   #14171c;
+    --color-spirits-50:   #1e242c;
+    --color-spirits-100:  #313945;
+    --color-spirits-200:  #576579;
+    --color-spirits-300:  #667488;
+    --color-spirits-400:  #c3cad4;
+    --color-spirits-500:  #cfd5dd;
+    --color-spirits-600:  #dbdfe5;
+    --color-spirits-700:  #e7eaee;
+    --color-spirits-800:  #f3f4f6;
+    --color-spirits-900:  #f9fafb;
+    --color-spirits-950:  #fcfcfd;
+
+    /* Blue Duck */
+    --color-blue-duck-25:   #1e2a3b;
+    --color-blue-duck-50:   #1d314a;
+    --color-blue-duck-100:  #1d3759;
+    --color-blue-duck-200:  #1d3d68;
+    --color-blue-duck-300:  #1c4477;
+    --color-blue-duck-400:  #1c4a86;
+    --color-blue-duck-500:  #1766cf;
+    --color-blue-duck-600:  #3f89ec;
+    --color-blue-duck-700:  #63a0ef;
+    --color-blue-duck-800:  #88b6f3;
+    --color-blue-duck-900:  #accdf7;
+    --color-blue-duck-950:  #d1e3fa;
+
+    /* Magneton */
+    --color-magneton-25:    #2d2432;
+    --color-magneton-50:    #3b2438;
+    --color-magneton-100:   #4a243e;
+    --color-magneton-200:   #592444;
+    --color-magneton-300:   #67244a;
+    --color-magneton-400:   #67244a;
+    --color-magneton-500:   #d52377;
+    --color-magneton-600:   #dc468d;
+    --color-magneton-700:   #e269a2;
+    --color-magneton-800:   #e98db8;
+    --color-magneton-900:   #f0b0ce;
+    --color-magneton-950:   #f7d3e4;
+
+    /* Turtle Green */
+    --color-green-25:   #1f2e31;
+    --color-green-50:   #1f3936;
+    --color-green-100:  #20433a;
+    --color-green-200:  #204d3f;
+    --color-green-300:  #215744;
+    --color-green-400:  #226249;
+    --color-green-500:  #26a568;
+    --color-green-600:  #49b380;
+    --color-green-700:  #6bc298;
+    --color-green-800:  #8ed0b0;
+    --color-green-900:  #b1dfc9;
+    --color-green-950:  #d4ede1;
+
+    /* Red Babe */
+    --color-red-25:   #2d212b;
+    --color-red-50:   #3c1e2b;
+    --color-red-100:  #4c1b2a;
+    --color-red-200:  #5b1829;
+    --color-red-300:  #6a1629;
+    --color-red-400:  #791328;
+    --color-red-500:  #c40020;
+    --color-red-600:  #e22947;
+    --color-red-700:  #e7526a;
+    --color-red-800:  #ed7a8d;
+    --color-red-900:  #f2a3b0;
+    --color-red-950:  #f8ccd3;
+
+    /* Sweet Purple */
+    --color-purple-25:   #232938;
+    --color-purple-50:   #292e44;
+    --color-purple-100:  #292e44;
+    --color-purple-200:  #34385b;
+    --color-purple-300:  #393d67;
+    --color-purple-400:  #3f4273;
+    --color-purple-500:  #5758ab;
+    --color-purple-600:  #7b7cca;
+    --color-purple-700:  #9495d4;
+    --color-purple-800:  #9495d4;
+    --color-purple-900:  #c6c7e8;
+    --color-purple-950:  #e0e0f2;
+
+    /* Taco Yellow */
+    --color-yellow-25:   #2f3028;
+    --color-yellow-50:   #403b25;
+    --color-yellow-100:  #514721;
+    --color-yellow-200:  #62521e;
+    --color-yellow-300:  #735e1a;
+    --color-yellow-400:  #846a17;
+    --color-yellow-500:  #f2b500;
+    --color-yellow-600:  #f4c129;
+    --color-yellow-700:  #f6cd52;
+    --color-yellow-800:  #f8d97a;
+    --color-yellow-900:  #fae4a3;
+    --color-yellow-950:  #fcf0cc;
+
+    /* Orange Squash */
+    --color-orange-25:   #2d2828;
+    --color-orange-50:   #3c2c25;
+    --color-orange-100:  #4c3021;
+    --color-orange-200:  #5b351e;
+    --color-orange-300:  #6a391a;
+    --color-orange-400:  #793d17;
+    --color-orange-500:  #dc5800;
+    --color-orange-600:  #e27329;
+    --color-orange-700:  #e78d52;
+    --color-orange-800:  #eda87a;
+    --color-orange-900:  #f2c3a3;
+    --color-orange-950:  #f8decc;
+
+    /* Background hierarchy — darkest → lightest */
+    --color-bg-page:         var(--color-spirits-25);   /* = #14171c darkest bg    */
+    --color-bg-surface:      var(--color-spirits-50);   /* = #1e242c cards / even rows */
+    --color-surface-raised:  var(--color-spirits-100);  /* = #313945 raised         */
+    --color-bg-raised:       var(--color-spirits-100);  /* = #313945 modals / odd rows */
+  }
+}
+
+[data-theme="dark"] {
+  /* Spirits */
+  --color-spirits-25:   #14171c;
+  --color-spirits-50:   #1e242c;
+  --color-spirits-100:  #313945;
+  --color-spirits-200:  #576579;
+  --color-spirits-300:  #667488;
+  --color-spirits-400:  #c3cad4;
+  --color-spirits-500:  #cfd5dd;
+  --color-spirits-600:  #dbdfe5;
+  --color-spirits-700:  #e7eaee;
+  --color-spirits-800:  #f3f4f6;
+  --color-spirits-900:  #f9fafb;
+  --color-spirits-950:  #fcfcfd;
+
+  /* Blue Duck */
+  --color-blue-duck-25:   #1e2a3b;
+  --color-blue-duck-50:   #1d314a;
+  --color-blue-duck-100:  #1d3759;
+  --color-blue-duck-200:  #1d3d68;
+  --color-blue-duck-300:  #1c4477;
+  --color-blue-duck-400:  #1c4a86;
+  --color-blue-duck-500:  #1766cf;
+  --color-blue-duck-600:  #3f89ec;
+  --color-blue-duck-700:  #63a0ef;
+  --color-blue-duck-800:  #88b6f3;
+  --color-blue-duck-900:  #accdf7;
+  --color-blue-duck-950:  #d1e3fa;
+
+  /* Magneton */
+  --color-magneton-25:    #2d2432;
+  --color-magneton-50:    #3b2438;
+  --color-magneton-100:   #4a243e;
+  --color-magneton-200:   #592444;
+  --color-magneton-300:   #67244a;
+  --color-magneton-400:   #67244a;
+  --color-magneton-500:   #d52377;
+  --color-magneton-600:   #dc468d;
+  --color-magneton-700:   #e269a2;
+  --color-magneton-800:   #e98db8;
+  --color-magneton-900:   #f0b0ce;
+  --color-magneton-950:   #f7d3e4;
+
+  /* Turtle Green */
+  --color-green-25:   #1f2e31;
+  --color-green-50:   #1f3936;
+  --color-green-100:  #20433a;
+  --color-green-200:  #204d3f;
+  --color-green-300:  #215744;
+  --color-green-400:  #226249;
+  --color-green-500:  #26a568;
+  --color-green-600:  #49b380;
+  --color-green-700:  #6bc298;
+  --color-green-800:  #8ed0b0;
+  --color-green-900:  #b1dfc9;
+  --color-green-950:  #d4ede1;
+
+  /* Red Babe */
+  --color-red-25:   #2d212b;
+  --color-red-50:   #3c1e2b;
+  --color-red-100:  #4c1b2a;
+  --color-red-200:  #5b1829;
+  --color-red-300:  #6a1629;
+  --color-red-400:  #791328;
+  --color-red-500:  #c40020;
+  --color-red-600:  #e22947;
+  --color-red-700:  #e7526a;
+  --color-red-800:  #ed7a8d;
+  --color-red-900:  #f2a3b0;
+  --color-red-950:  #f8ccd3;
+
+  /* Sweet Purple */
+  --color-purple-25:   #232938;
+  --color-purple-50:   #292e44;
+  --color-purple-100:  #292e44;
+  --color-purple-200:  #34385b;
+  --color-purple-300:  #393d67;
+  --color-purple-400:  #3f4273;
+  --color-purple-500:  #5758ab;
+  --color-purple-600:  #7b7cca;
+  --color-purple-700:  #9495d4;
+  --color-purple-800:  #9495d4;
+  --color-purple-900:  #c6c7e8;
+  --color-purple-950:  #e0e0f2;
+
+  /* Taco Yellow */
+  --color-yellow-25:   #2f3028;
+  --color-yellow-50:   #403b25;
+  --color-yellow-100:  #514721;
+  --color-yellow-200:  #62521e;
+  --color-yellow-300:  #735e1a;
+  --color-yellow-400:  #846a17;
+  --color-yellow-500:  #f2b500;
+  --color-yellow-600:  #f4c129;
+  --color-yellow-700:  #f6cd52;
+  --color-yellow-800:  #f8d97a;
+  --color-yellow-900:  #fae4a3;
+  --color-yellow-950:  #fcf0cc;
+
+  /* Orange Squash */
+  --color-orange-25:   #2d2828;
+  --color-orange-50:   #3c2c25;
+  --color-orange-100:  #4c3021;
+  --color-orange-200:  #5b351e;
+  --color-orange-300:  #6a391a;
+  --color-orange-400:  #793d17;
+  --color-orange-500:  #dc5800;
+  --color-orange-600:  #e27329;
+  --color-orange-700:  #e78d52;
+  --color-orange-800:  #eda87a;
+  --color-orange-900:  #f2c3a3;
+  --color-orange-950:  #f8decc;
+
+  /* Background hierarchy — darkest → lightest */
+  --color-bg-page:         var(--color-spirits-25);   /* = #14171c darkest bg    */
+  --color-bg-surface:      var(--color-spirits-50);   /* = #1e242c cards / even rows */
+  --color-surface-raised:  var(--color-spirits-100);  /* = #313945 raised         */
+  --color-bg-raised:       var(--color-spirits-100);  /* = #313945 modals / odd rows */
+}
+
+/* ── Light mode override ───────────────────────────────────────────────────────
+   Forces light palette when [data-theme="light"] is set explicitly, overriding
+   the @media (prefers-color-scheme: dark) block above for system-dark users.
+──────────────────────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  /* Spirits */
+  --color-spirits-25:   #fcfcfd;
+  --color-spirits-50:   #f9fafb;
+  --color-spirits-100:  #f3f4f6;
+  --color-spirits-200:  #e7eaee;
+  --color-spirits-300:  #dbdfe5;
+  --color-spirits-400:  #cfd5dd;
+  --color-spirits-500:  #c3cad4;
+  --color-spirits-600:  #667488;
+  --color-spirits-700:  #576579;
+  --color-spirits-800:  #313945;
+  --color-spirits-900:  #1e242c;
+  --color-spirits-950:  #0e1013;
+
+  /* Blue Duck */
+  --color-blue-duck-25:   #f8f9fd;
+  --color-blue-duck-50:   #f2f5fd;
+  --color-blue-duck-100:  #e4e9fa;
+  --color-blue-duck-200:  #c6d2f6;
+  --color-blue-duck-300:  #a2b8f1;
+  --color-blue-duck-400:  #749aed;
+  --color-blue-duck-500:  #1a73e8;
+  --color-blue-duck-600:  #1766cf;
+  --color-blue-duck-700:  #1459b3;
+  --color-blue-duck-800:  #104892;
+  --color-blue-duck-900:  #0b3367;
+  --color-blue-duck-950:  #082449;
+
+  /* Magneton */
+  --color-magneton-25:    #fdf8f9;
+  --color-magneton-50:    #fbf2f4;
+  --color-magneton-100:   #f7e4ea;
+  --color-magneton-200:   #efc6d3;
+  --color-magneton-300:   #e6a3b9;
+  --color-magneton-400:   #de769b;
+  --color-magneton-500:   #d52377;
+  --color-magneton-600:   #be1f6a;
+  --color-magneton-700:   #a41b5c;
+  --color-magneton-800:   #86164b;
+  --color-magneton-900:   #5f0f35;
+  --color-magneton-950:   #430b25;
+
+  /* Turtle Green */
+  --color-green-25:    #f8fbf9;
+  --color-green-50:    #f2f7f4;
+  --color-green-100:   #e4efe8;
+  --color-green-200:   #c6dfd0;
+  --color-green-300:   #a3cdb4;
+  --color-green-400:   #76ba93;
+  --color-green-500:   #26a568;
+  --color-green-600:   #21935d;
+  --color-green-700:   #1d7f50;
+  --color-green-800:   #186841;
+  --color-green-900:   #10492e;
+  --color-green-950:   #0c3420;
+
+  /* Red Babe */
+  --color-red-25:    #fdf8f8;
+  --color-red-50:    #fbf1f2;
+  --color-red-100:   #f8e4e4;
+  --color-red-200:   #f1c5c6;
+  --color-red-300:   #eaa1a3;
+  --color-red-400:   #e37276;
+  --color-red-500:   #dc0024;
+  --color-red-600:   #c40020;
+  --color-red-700:   #aa001b;
+  --color-red-800:   #8b0016;
+  --color-red-900:   #620010;
+  --color-red-950:   #45000b;
+
+  /* Sweet Purple */
+  --color-purple-25:    #f9f9fc;
+  --color-purple-50:    #f3f3f9;
+  --color-purple-100:   #e8e8f3;
+  --color-purple-200:   #cfcfe7;
+  --color-purple-300:   #b2b2db;
+  --color-purple-400:   #8f90ce;
+  --color-purple-500:   #6263c0;
+  --color-purple-600:   #5758ab;
+  --color-purple-700:   #4b4c94;
+  --color-purple-800:   #3d3e79;
+  --color-purple-900:   #2b2c55;
+  --color-purple-950:   #1e1f3c;
+
+  /* Taco Yellow */
+  --color-yellow-25:    #fffcf2;
+  --color-yellow-50:    #fff8e4;
+  --color-yellow-100:   #fff1c9;
+  --color-yellow-200:   #ffe494;
+  --color-yellow-300:   #ffd65e;
+  --color-yellow-400:   #ffc929;
+  --color-yellow-500:   #f2b500;
+  --color-yellow-600:   #c29100;
+  --color-yellow-700:   #916d00;
+  --color-yellow-800:   #614800;
+  --color-yellow-900:   #302400;
+  --color-yellow-950:   #181200;
+
+  /* Orange Squash */
+  --color-orange-25:    #fdfbf9;
+  --color-orange-50:    #fcf6f2;
+  --color-orange-100:   #faebe2;
+  --color-orange-200:   #f2d8c6;
+  --color-orange-300:   #ebbfa1;
+  --color-orange-400:   #e39f72;
+  --color-orange-500:   #dc5800;
+  --color-orange-600:   #c54f00;
+  --color-orange-700:   #aa4400;
+  --color-orange-800:   #8b3800;
+  --color-orange-900:   #622700;
+  --color-orange-950:   #461c00;
+
+  /* Raised surfaces + bg hierarchy */
+  --color-bg-page:         var(--color-spirits-100);
+  --color-bg-surface:      var(--color-spirits-50);
+  --color-surface-raised:  #ffffff;
+  --color-bg-raised:       #ffffff;
+}

@@ -1,0 +1,609 @@
+@import '../../tokens.css';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dropdown — Design tokens
+   Antiqua Design System
+───────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* ── Backgrounds */
+  --dd-bg:              var(--color-surface-raised);
+  --dd-bg-disabled:     var(--color-spirits-200);
+  --dd-bg-panel:        var(--color-surface-raised);
+  --dd-bg-opt-hover:    var(--color-spirits-100);
+  --dd-bg-opt-sel:      var(--color-primary-subtle);
+
+  /* ── Border colours */
+  --dd-border-default:  var(--color-border);
+  --dd-border-blue:     var(--color-blue-duck-500);
+  --dd-border-red:      var(--color-red-500);
+  --dd-border-err-idle: var(--color-red-500);
+  --dd-border-err-act:  var(--color-red-500);
+  --dd-border-panel:    var(--color-border);
+
+  /* ── Focus rings */
+  --dd-ring-focus:      0px 0px 0px 2px rgba(26, 115, 232, 0.24);
+  --dd-ring-focus-hov:  0px 0px 0px 4px rgba(26, 115, 232, 0.16);
+  --dd-ring-err-focus:  0px 0px 0px 2px rgba(220, 0, 36, 0.24);
+
+  /* ── Text colours */
+  --dd-text-900:        var(--color-text-primary);
+  --dd-text-700:        var(--color-text-secondary);
+  --dd-text-600:        var(--color-text-muted);
+  --dd-text-blue:       var(--color-primary);
+
+  /* ── Typography */
+  --dd-font:            var(--font-text);
+  --dd-text-base:       16px;
+  --dd-text-sm:         13px;
+  --dd-text-xs:         11px;
+  --dd-lh-base:         24px;
+  --dd-lh-sm:           16px;
+  --dd-fw-regular:      var(--font-weight-regular);
+  --dd-fw-medium:       var(--font-weight-medium);
+
+  /* ── Layout */
+  --dd-h-large:         48px;
+  --dd-h-medium:        40px;
+  --dd-radius:          var(--radius-sm);
+  --dd-radius-sm:       6px;
+  --dd-px:              16px;
+  --dd-gap-label:       4px;
+  --dd-gap-below:       8px;
+  --dd-opt-h:           36px;
+  --dd-panel-max-h:     240px;
+  --dd-panel-z:         100;
+  --dd-panel-shadow:
+    0px 7.448px  15.162px rgba(55, 73, 81, 0.05),
+    0px 25.017px 50.927px rgba(55, 73, 81, 0.07),
+    0px 112px    228px    rgba(55, 73, 81, 0.12);
+
+  /* ── Animation timing ─────────────────────────────────────────────────────
+     t-border    180ms  Border colour transitions.
+     t-ring      220ms  Focus ring expand/collapse.
+     t-ring-grow 140ms  Ring 2px → 4px micro-expansion.
+     t-panel-open  200ms  Panel appears — opacity + translateY + scale.
+     t-panel-close 200ms  Panel disappears — adds blur(2px) on exit.
+     t-chevron   220ms  Chevron rotation.
+     t-item      180ms  Per-option stagger-in animation.
+     t-helper    200ms  Error/helper message fade + slide.
+  ────────────────────────────────────────────────────────────────────────── */
+  --dd-t-border:        180ms;
+  --dd-t-ring:          220ms;
+  --dd-t-ring-grow:     140ms;
+  --dd-t-panel-open:    200ms;
+  --dd-t-panel-close:   200ms;
+  --dd-t-chevron:       220ms;
+  --dd-t-item:          180ms;
+  --dd-t-helper:        200ms;
+  --dd-t-clear:         180ms;
+
+  --dd-ease-emerge:     var(--ease-emerge);
+  --dd-ease-recede:     var(--ease-recede);
+  --dd-ease-standard:   var(--ease-standard);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Keyframes
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Panel rises and fades in */
+@keyframes dropdownOpen {
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)      scale(1);   }
+}
+
+/* Panel retreats — adds a 2px blur on exit */
+@keyframes dropdownClose {
+  from { opacity: 1; transform: translateY(0)      scale(1);    filter: blur(0px);  }
+  to   { opacity: 0; transform: translateY(-10px)  scale(0.98); filter: blur(2px);  }
+}
+
+/* Clear button slides in from the right */
+@keyframes clearSlideIn {
+  from { opacity: 0; transform: translateX(10px) scale(0.85); }
+  to   { opacity: 1; transform: translateX(0)    scale(1);    }
+}
+
+/* Clear button slides out to the right */
+@keyframes clearSlideOut {
+  from { opacity: 1; transform: translateX(0)    scale(1);    }
+  to   { opacity: 0; transform: translateX(10px) scale(0.85); }
+}
+
+/* Per-option stagger — slides gently from -5px and fades in */
+@keyframes dropdownItemIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Helper/error message descends into view */
+@keyframes helperSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Helper/error message slides back up and fades out */
+@keyframes helperSlideOut {
+  from { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Root container
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  position:       relative;
+  width:          100%;
+}
+
+.dropdown--inline,
+.dropdown--cell {
+  display:  inline-flex;
+  width:    auto;
+  position: relative;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Label  (default variant only)
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__label {
+  display:       flex;
+  gap:           var(--dd-gap-label);
+  align-items:   center;
+  margin-bottom: var(--dd-gap-label);
+  font-family:   var(--dd-font);
+  font-size:     var(--dd-text-sm);
+  font-weight:   var(--dd-fw-medium);
+  line-height:   var(--dd-lh-sm);
+  color:         var(--dd-text-900);
+  transition:    color var(--dd-t-border) var(--dd-ease-standard);
+  cursor:        default;
+  user-select:   none;
+}
+
+.dropdown__label--error { color: var(--dd-border-red); }
+.dropdown__required     { color: var(--dd-border-red); }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Wrapper  (default variant)
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__wrapper {
+  position:      relative;
+  background:    var(--dd-bg);
+  border-radius: var(--dd-radius);
+  width:         100%;
+  flex-shrink:   0;
+  transition:    background var(--dd-t-border) var(--dd-ease-standard);
+}
+
+.dropdown__wrapper--large  { height: var(--dd-h-large);  }
+.dropdown__wrapper--medium { height: var(--dd-h-medium); }
+
+.dropdown__wrapper--disabled {
+  background: var(--dd-bg-disabled);
+  cursor:     not-allowed;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Trigger  (default variant)
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__trigger {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  width:           100%;
+  height:          100%;
+  padding:         0 var(--dd-px) 0 var(--dd-px);
+  background:      transparent;
+  border:          none;
+  outline:         none;
+  cursor:          pointer;
+  border-radius:   var(--dd-radius);
+  font-family:     var(--dd-font);
+  font-weight:     var(--dd-fw-regular);
+  gap:             8px;
+}
+
+.dropdown__trigger--large  { font-size: var(--dd-text-base); line-height: var(--dd-lh-base); }
+.dropdown__trigger--medium { font-size: var(--dd-text-sm);   line-height: var(--dd-lh-sm);   }
+
+.dropdown__trigger:disabled            { cursor: not-allowed; }
+.dropdown__trigger:active:not(:disabled) { transform: scale(0.985); }
+
+.dropdown__trigger-content {
+  display:       flex;
+  align-items:   center;
+  gap:           6px;
+  flex:          1 1 0;
+  min-width:     0;
+  overflow:      hidden;
+}
+
+.dropdown__trigger-right {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  flex-shrink: 0;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Shared value / placeholder / badge
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__placeholder {
+  color:         var(--dd-text-600);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown__value {
+  color:         var(--dd-text-900);
+  font-weight:   var(--dd-fw-regular);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+/* In error state the placeholder turns red to reinforce the validation signal */
+.dropdown__wrapper--error .dropdown__placeholder {
+  color: var(--dd-border-red);
+}
+
+.dropdown__left-icon {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           16px;
+  height:          16px;
+  flex-shrink:     0;
+  color:           var(--dd-text-600);
+}
+
+.dropdown__value-sep {
+  color:       var(--dd-text-900);
+  font-weight: var(--dd-fw-regular);
+  flex-shrink: 0;
+}
+
+.dropdown__badge-inline {
+  color:          var(--dd-text-blue);
+  font-weight:    var(--dd-fw-medium);
+  letter-spacing: -0.02em;
+  flex-shrink:    0;
+  white-space:    nowrap;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Clear button
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__clear {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           28px;
+  height:          28px;
+  background:      var(--color-spirits-100);
+  border:          none;
+  border-radius:   calc(var(--dd-radius) - 2px);
+  padding:         6px;
+  cursor:          pointer;
+  color:           var(--dd-text-600);
+  flex-shrink:     0;
+  transition:
+    opacity    var(--dd-t-clear) var(--dd-ease-emerge),
+    color      120ms             linear,
+    background 120ms             linear;
+}
+
+.dropdown__clear:hover {
+  background: var(--color-spirits-200);
+  color:      var(--dd-text-900);
+}
+
+.dropdown__clear:active {
+  background: var(--color-spirits-300);
+}
+
+/* Slide in from the right when multiselect gains a value */
+.dropdown__clear--visible {
+  animation: clearSlideIn var(--dd-t-clear) var(--dd-ease-emerge) both;
+}
+
+.dropdown__clear--exiting {
+  animation:      clearSlideOut var(--dd-t-clear) var(--dd-ease-recede) both;
+  pointer-events: none;
+}
+
+.dropdown__clear--cell {
+  width:         16px;
+  height:        16px;
+  border-radius: 50%;
+  padding:       0;
+  background:    var(--color-spirits-200);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Chevron
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__chevron {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  color:           var(--dd-text-600);
+  transform:       rotate(0deg);
+  transition:
+    transform var(--dd-t-chevron) var(--dd-ease-standard),
+    color     var(--dd-t-border)  var(--dd-ease-standard);
+}
+
+.dropdown__chevron--open {
+  transform: rotate(180deg);
+  color:     var(--dd-text-900);
+}
+
+.dropdown__chevron--cell.dropdown__chevron--open {
+  color: var(--dd-text-600);
+}
+
+.dropdown__chevron--inline {
+  color: inherit;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__panel {
+  position:         absolute;
+  top:              calc(100% + 8px);
+  left:             0;
+  z-index:          var(--dd-panel-z);
+  background:       var(--dd-bg-panel);
+  border:           1px solid var(--dd-border-panel);
+  border-radius:    16px;
+  box-shadow:       var(--dd-panel-shadow);
+  overflow:         hidden;
+  transform-origin: top center;
+  min-width:        200px;
+}
+
+.dropdown__panel--default { right: 0; }
+.dropdown__panel--inline  { min-width: 160px; }
+.dropdown__panel--cell    { min-width: 180px; }
+
+/* When rendered via portal: parent div handles fixed positioning; override absolute */
+.dropdown__panel--cell-portal {
+  position: static;
+}
+
+.dropdown__panel--visible {
+  animation: dropdownOpen var(--dd-t-panel-open) var(--dd-ease-standard) both;
+}
+
+.dropdown__panel--exiting {
+  animation:      dropdownClose var(--dd-t-panel-close) var(--dd-ease-standard) both;
+  pointer-events: none;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Search — InputField embedded inside panel
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__search-wrap {
+  padding: 8px 8px;
+}
+
+/* Hide InputField's label and below-field area — not needed for search */
+.dropdown__search-wrap .input-field__label { display: none; }
+.dropdown__search-wrap .input-field__below { display: none; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Menu — embedded inside dropdown panel
+   Overrides Menu's own container styles; the panel handles shadow/border/radius.
+   Silk stagger (dropdownItemIn) applied to menu items via nth-child.
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__panel .dropdown__menu {
+  width:         100%;
+  border:        none;
+  border-radius: 0;
+  box-shadow:    none;
+  background:    transparent;
+
+  max-height:    var(--dd-panel-max-h);
+  overflow-y:    auto;
+  animation:     none !important;
+}
+
+/* Silk per-item stagger on panel open */
+.dropdown__panel--visible .dropdown__menu .menu-item {
+  animation: dropdownItemIn var(--dd-t-item) ease-out both;
+}
+
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(1)   { animation-delay: 0ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(2)   { animation-delay: 35ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(3)   { animation-delay: 70ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(4)   { animation-delay: 105ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(5)   { animation-delay: 140ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(6)   { animation-delay: 175ms; }
+.dropdown__panel--visible .dropdown__menu .menu__section-items .menu-item:nth-child(n+7) { animation-delay: 200ms; }
+
+.dropdown__empty {
+  padding:     16px 12px;
+  text-align:  center;
+  font-family: var(--dd-font);
+  font-size:   var(--dd-text-sm);
+  color:       var(--dd-text-600);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Border overlay  (default variant)
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__border {
+  position:       absolute;
+  inset:          0;
+  border:         1px solid transparent;
+  border-radius:  var(--dd-radius);
+  pointer-events: none;
+  transition:
+    border-color var(--dd-t-border) var(--dd-ease-standard),
+    box-shadow   var(--dd-t-ring)   var(--dd-ease-emerge);
+}
+
+.dropdown__border--default      { border-color: var(--dd-border-default); box-shadow: none; }
+.dropdown__border--hovered      { border-color: var(--dd-border-blue);    box-shadow: none; }
+.dropdown__border--focused      { border-color: var(--dd-border-blue);    box-shadow: var(--dd-ring-focus); }
+.dropdown__border--open         { border-color: var(--dd-border-blue);    box-shadow: var(--dd-ring-focus); }
+.dropdown__border--error        { border-color: var(--dd-border-err-idle); box-shadow: none; }
+.dropdown__border--error-hover  { border-color: var(--dd-border-err-act);  box-shadow: none; }
+.dropdown__border--error-open   { border-color: var(--dd-border-err-act);  box-shadow: var(--dd-ring-err-focus); }
+.dropdown__border--disabled     { border-color: var(--dd-border-default);  box-shadow: none; }
+
+.dropdown__border--focused-hovered,
+.dropdown__border--open-hovered {
+  border-color: var(--dd-border-blue);
+  box-shadow:   var(--dd-ring-focus-hov);
+  transition:
+    border-color var(--dd-t-border)    var(--dd-ease-standard),
+    box-shadow   var(--dd-t-ring-grow) var(--dd-ease-emerge);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Below-field area  (default variant)
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__below {
+  position: relative;
+  width:    100%;
+  height:   0;
+}
+
+.dropdown__helper {
+  position:    absolute;
+  top:         4px;
+  left:        0;
+  width:       100%;
+  font-family: var(--dd-font);
+  font-size:   var(--dd-text-sm);
+  font-weight: var(--dd-fw-regular);
+  line-height: var(--dd-lh-sm);
+  white-space: pre-wrap;
+}
+
+.dropdown__helper--neutral  { color: var(--dd-text-600);   }
+.dropdown__helper--error    { color: var(--dd-border-red); }
+
+.dropdown__helper--entering {
+  animation: helperSlideIn var(--dd-t-helper) var(--dd-ease-emerge) both;
+}
+
+.dropdown__helper--exiting {
+  animation: helperSlideOut var(--dd-t-helper) var(--dd-ease-recede) both;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   VARIANT: inline
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__trigger--inline {
+  display:     inline-flex;
+  align-items: center;
+  gap:         3px;
+  background:  transparent;
+  border:      none;
+  outline:     none;
+  cursor:      pointer;
+  padding:     0;
+  font-family: var(--dd-font);
+  font-size:   inherit;
+  font-weight: var(--dd-fw-medium);
+  line-height: inherit;
+  color:       var(--dd-text-blue);
+  transition:  color var(--dd-t-border) var(--dd-ease-standard),
+               opacity 120ms linear;
+}
+
+.dropdown__trigger--inline:hover { color: var(--color-primary-hover); }
+
+.dropdown__trigger--inline .dropdown__placeholder {
+  color:       inherit;
+  font-weight: var(--dd-fw-regular);
+  opacity:     0.65;
+}
+
+.dropdown__trigger--inline .dropdown__value {
+  color:       inherit;
+  font-weight: var(--dd-fw-medium);
+}
+
+.dropdown__trigger--inline-disabled {
+  opacity: 0.42;
+  cursor:  not-allowed;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   VARIANT: cell
+───────────────────────────────────────────────────────────────────────────── */
+
+.dropdown__trigger--cell {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           5px;
+  background:    transparent;
+  border:        none;
+  outline:       none;
+  cursor:        pointer;
+  padding:       4px 8px 4px 6px;
+  border-radius: var(--dd-radius-sm);
+  font-family:   var(--dd-font);
+  font-size:     var(--dd-text-sm);
+  font-weight:   var(--dd-fw-regular);
+  line-height:   var(--dd-lh-sm);
+  color:         var(--dd-text-900);
+  transition:    background 120ms linear;
+}
+
+.dropdown__trigger--cell:hover,
+.dropdown__trigger--cell-hovered { background: var(--dd-bg-opt-hover); }
+
+.dropdown__trigger--cell-open,
+.dropdown__trigger--cell:focus-visible {
+  background: var(--dd-bg-opt-hover);
+  outline:    none;
+}
+
+.dropdown__trigger--cell .dropdown__value       { font-weight: var(--dd-fw-regular); color: var(--dd-text-900); }
+.dropdown__trigger--cell .dropdown__placeholder { color: var(--dd-text-600); }
+.dropdown__trigger--cell .dropdown__chevron     { color: var(--dd-text-600); }
+
+.dropdown__trigger--cell-disabled {
+  opacity: 0.42;
+  cursor:  not-allowed;
+}
