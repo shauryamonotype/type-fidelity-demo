@@ -1,8 +1,4 @@
 import { useRef, useState } from 'react'
-import { Typography } from '../../components/Typography/Typography'
-import { Button } from '../../components/Button/Button'
-import { StatusBadge } from '../../components/StatusBadge/StatusBadge'
-import { Toggle } from '../../components/Toggle/Toggle'
 import type { WizardState, WizardAction, AuditViolation } from '../../store/wizard'
 import { runAudit, applyFixes } from '../../api/client'
 
@@ -13,140 +9,153 @@ interface Props {
 
 const AUTO_FIX_PARAMS = new Set(['font_name', 'size', 'casing', 'letter_spacing', 'alignment'])
 
+// Document + lists illustration for screen 4
+function ListsIllustration() {
+  return (
+    <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Document stack */}
+      <rect x="52" y="32" width="108" height="136" rx="6" fill="#E2E5E8"/>
+      <rect x="64" y="22" width="108" height="136" rx="6" fill="#E2E5E8"/>
+      <rect x="76" y="12" width="108" height="136" rx="6" fill="#fff" stroke="#E2E5E8" strokeWidth="1.5"/>
+      {/* List lines */}
+      <rect x="92" y="38" width="12" height="6" rx="3" fill="#24272B"/>
+      <rect x="110" y="38" width="56" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="92" y="54" width="12" height="6" rx="3" fill="#24272B"/>
+      <rect x="110" y="54" width="48" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="92" y="70" width="12" height="6" rx="3" fill="#24272B"/>
+      <rect x="110" y="70" width="60" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="92" y="86" width="12" height="6" rx="3" fill="#24272B"/>
+      <rect x="110" y="86" width="44" height="6" rx="3" fill="#E2E5E8"/>
+      {/* Upload circle */}
+      <circle cx="120" cy="184" r="44" fill="#24272B"/>
+      {/* Arrow up */}
+      <path d="M120 164 L120 204 M107 178 L120 164 L133 178" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+function SeverityBadge({ severity }: { severity: string }) {
+  const isHard = severity === 'hard'
+  const isSoft = severity === 'soft'
+  const bg = isHard ? '#F8E4E4' : isSoft ? '#FEF3C7' : '#E0F2FE'
+  const color = isHard ? '#C40020' : isSoft ? '#92400E' : '#0369A1'
+  const label = isHard ? 'HARD' : isSoft ? 'SOFT' : 'INFO'
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      padding: '2px 8px', gap: 3,
+      background: bg, border: `1px solid ${bg}`, borderRadius: 4,
+    }}>
+      <span style={{ fontSize: 9, fontWeight: 500, lineHeight: '16px', color }}>{label}</span>
+    </div>
+  )
+}
+
 function ViolationCard({
-  v,
-  decision,
-  onFix,
-  onIgnore,
+  v, decision, onFix, onIgnore,
 }: {
   v: AuditViolation
   decision: 'fix' | 'ignore' | undefined
   onFix: () => void
   onIgnore: () => void
 }) {
-  const isHard = v.severity === 'hard'
-  const borderColor = isHard ? '#ef4444' : '#f59e0b'
-  const badgeStatus = isHard ? 'Critical' : v.severity === 'soft' ? 'Warning' : 'Info'
-
+  const ignored = decision === 'ignore'
   return (
-    <div
-      style={{
-        border: `1.5px solid ${decision === 'fix' ? '#22c55e' : decision === 'ignore' ? '#d1d5db' : borderColor}`,
-        borderRadius: 10,
-        padding: '16px 20px',
-        background: decision === 'fix' ? '#f0fdf4' : decision === 'ignore' ? '#f9fafb' : 'white',
-        opacity: decision === 'ignore' ? 0.6 : 1,
-        transition: 'all 0.15s',
-      }}
-    >
-      {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
-        <StatusBadge status={badgeStatus as 'Critical' | 'Warning' | 'Info'} />
-        <div style={{ flex: 1 }}>
-          <Typography variant="b2" weight="bold" style={{ color: '#111827' }}>
-            {v.title ?? v.parameter.replace(/_/g, ' ')}
-          </Typography>
-          {v.inferred_role && (
-            <Typography variant="m1" color="muted" style={{ marginTop: 2 }}>
-              {v.inferred_role}
-              {v.slide_number ? ` · Slide ${v.slide_number}` : ''}
-              {v.shape_name ? ` · ${v.shape_name}` : ''}
-            </Typography>
-          )}
-        </div>
+    <div style={{
+      borderBottom: '1px solid #DBDFE5',
+      padding: '20px 0',
+      opacity: ignored ? 0.45 : 1,
+      transition: 'opacity 0.15s',
+    }}>
+      {/* Title row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        <span style={{ fontSize: 16, fontWeight: 500, lineHeight: '24px', letterSpacing: '-0.02em', color: '#1E242C', flex: 1 }}>
+          {v.title ?? v.parameter.replace(/_/g, ' ')}
+        </span>
+        <SeverityBadge severity={v.severity} />
       </div>
 
-      {/* Text preview */}
-      {v.text_preview && (
-        <div
-          style={{
-            background: '#f3f4f6',
-            borderRadius: 6,
-            padding: '6px 10px',
-            marginBottom: 12,
-            fontSize: 12,
-            color: '#374151',
-            fontStyle: 'italic',
-          }}
-        >
-          &ldquo;{v.text_preview.slice(0, 120)}&rdquo;
-        </div>
-      )}
-
-      {/* Found → Fix */}
-      <div style={{ display: 'flex', gap: 0, alignItems: 'center', marginBottom: 14 }}>
-        <div
-          style={{
-            flex: 1,
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '6px 0 0 6px',
-            padding: '8px 12px',
-          }}
-        >
-          <div style={{ fontSize: 10, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>
-            FOUND
+      {/* Metadata rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+        {v.text_preview && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Issue with:</span>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
+              &ldquo;{v.text_preview.slice(0, 80)}&rdquo;
+              {v.slide_number ? ` at slide ${v.slide_number}` : ''}
+            </span>
           </div>
-          <code style={{ fontSize: 13, color: '#dc2626', fontFamily: 'monospace' }}>
+        )}
+        {v.parameter && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Reason:</span>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
+              Incorrect {v.parameter.replace(/_/g, ' ')}
+            </span>
+          </div>
+        )}
+        {v.suggestion && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Brand recommendation:</span>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>{v.suggestion}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div style={{ borderBottom: '1px solid #DBDFE5', marginBottom: 12 }} />
+
+      {/* FOUND → RECOMMENDED FIX */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 30, marginBottom: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579', letterSpacing: '0.04em' }}>FOUND</span>
+          <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#1E242C' }}>
             {v.actual_value || v.found || '—'}
-          </code>
+          </span>
         </div>
 
-        <div
-          style={{
-            background: '#f3f4f6',
-            padding: '0 12px',
-            fontSize: 18,
-            color: '#9ca3af',
-            display: 'flex',
-            alignItems: 'center',
-            alignSelf: 'stretch',
-          }}
-        >
-          →
-        </div>
+        {/* Arrow */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12H19M14 7L19 12L14 17" stroke="#667488" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
 
-        <div
-          style={{
-            flex: 1,
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
-            borderRadius: '0 6px 6px 0',
-            padding: '8px 12px',
-          }}
-        >
-          <div style={{ fontSize: 10, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>
-            RECOMMENDED FIX
-          </div>
-          <code style={{ fontSize: 13, color: '#16a34a', fontFamily: 'monospace' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579', letterSpacing: '0.04em' }}>RECOMMENDED FIX</span>
+          <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#1E242C' }}>
             {v.expected_value || v.fix || '—'}
-          </code>
+          </span>
         </div>
       </div>
 
-      {/* Suggestion */}
-      {v.suggestion && (
-        <Typography variant="m1" color="muted" style={{ marginBottom: 12 }}>
-          {v.suggestion}
-        </Typography>
-      )}
-
-      {/* Actions */}
+      {/* Buttons */}
       <div style={{ display: 'flex', gap: 8 }}>
-        <Button
-          buttonLabel="Fix issue"
-          color="Blue"
-          type={decision === 'fix' ? 'Default' : 'Ghost'}
-          size="Small"
+        <button
           onClick={onFix}
-        />
-        <Button
-          buttonLabel="Ignore issue"
-          color="Blue"
-          type={decision === 'ignore' ? 'Default' : 'Ghost'}
-          size="Small"
+          style={{
+            width: 78, height: 32, padding: '8px 12px',
+            background: decision === 'fix' ? '#1A73E8' : '#E7EAEE',
+            border: 'none', borderRadius: 8,
+            fontSize: 11, fontWeight: 500, lineHeight: '16px',
+            color: decision === 'fix' ? '#fff' : '#1E242C',
+            cursor: 'pointer',
+          }}
+        >
+          Fix issue
+        </button>
+        <button
           onClick={onIgnore}
-        />
+          style={{
+            width: 90, height: 32, padding: '8px 12px',
+            background: decision === 'ignore' ? '#1E242C' : 'transparent',
+            border: `1px solid ${decision === 'ignore' ? '#1E242C' : '#DBDFE5'}`,
+            borderRadius: 8,
+            fontSize: 11, fontWeight: 500, lineHeight: '16px',
+            color: decision === 'ignore' ? '#fff' : '#576579',
+            cursor: 'pointer',
+          }}
+        >
+          Ignore issue
+        </button>
       </div>
     </div>
   )
@@ -212,213 +221,216 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
   const violations = result?.violations ?? []
   const hardCount = violations.filter(v => v.severity === 'hard').length
   const softCount = violations.filter(v => v.severity === 'soft').length
-  const fixableViolations = violations.filter(
-    v => v.auto_fixable || AUTO_FIX_PARAMS.has(v.parameter)
-  )
-  const fixCount = Object.values(state.fixDecisions).filter(d => d === 'fix').length
+  const infoCount = violations.filter(v => v.severity === 'info').length
   const score = result?.compliance_score ?? 0
+  const fixableViolations = violations.filter(v => v.auto_fixable || AUTO_FIX_PARAMS.has(v.parameter))
+  const fixCount = Object.values(state.fixDecisions).filter(d => d === 'fix').length
 
-  const scoreColor =
-    score >= 80 ? '#16a34a' : score >= 60 ? '#d97706' : '#ef4444'
-
-  // ── Upload screen (no result yet) ──────────────────────────────────────────
+  // ── Upload screen ────────────────────────────────────────────────────────
   if (!result) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 520 }}>
-        {/* Aa illustration */}
-        <div style={{ marginBottom: 24 }}>
-          <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-            <rect x="28" y="8" width="52" height="64" rx="4" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="1.5"/>
-            <rect x="36" y="8" width="52" height="64" rx="4" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="1.5"/>
-            <rect x="44" y="8" width="52" height="64" rx="4" fill="white" stroke="#d1d5db" strokeWidth="1.5"/>
-            <text x="70" y="52" textAnchor="middle" fontSize="24" fontWeight="700" fill="#1d4ed8" fontFamily="serif">Aa</text>
-            <circle cx="60" cy="88" r="22" fill="#1d4ed8"/>
-            <path d="M60 78 L60 98 M52 86 L60 78 L68 86" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="60" cy="88" r="22" fill="none" stroke="#1e40af" strokeWidth="1"/>
-          </svg>
-        </div>
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        minHeight: '100%', padding: '32px 0',
+      }}>
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', gap: 32, width: 629,
+        }}>
+          <ListsIllustration />
 
-        <Typography variant="h5" weight="bold" style={{ marginBottom: 8, textAlign: 'center' }}>
-          Upload document to check
-        </Typography>
-        <Typography variant="b2" color="muted" style={{ marginBottom: 20, textAlign: 'center' }}>
-          Upload a PPTX or DOCX file to audit against your brand guidelines.
-        </Typography>
-
-        {auditFile && !running && (
-          <Typography variant="b2" color="muted" style={{ marginBottom: 12 }}>
-            📄 {auditFile.name}
-          </Typography>
-        )}
-
-        {runError && (
-          <pre style={{
-            color: '#dc2626', fontSize: 12, background: '#fef2f2',
-            border: '1px solid #fecaca', borderRadius: 6, padding: '8px 12px',
-            whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-            maxHeight: 120, overflowY: 'auto', marginBottom: 12, maxWidth: 520, width: '100%',
-          }}>
-            {runError}
-          </pre>
-        )}
-
-        <Typography variant="m1" color="muted" style={{ marginBottom: 10 }}>
-          Supported formats: PPTX, DOCX
-        </Typography>
-
-        {/* Audit mode toggle */}
-        {auditFile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <Typography variant="b2" weight="medium">Rule-based</Typography>
-            <Toggle
-              state={state.auditMode === 'intelligent' ? 'on' : 'off'}
-              onChange={v =>
-                dispatch({ type: 'SET_FIELD', field: 'auditMode', value: v === 'on' ? 'intelligent' : 'rule_based' })
-              }
-              size="Large"
-            />
-            <Typography variant="b2" weight="medium">Intelligent + AI</Typography>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <span style={{
+              fontSize: 23, fontWeight: 700, lineHeight: '32px',
+              letterSpacing: '-0.01em', color: '#1E242C', textAlign: 'center',
+            }}>
+              Upload document to check
+            </span>
+            <span style={{
+              fontSize: 16, fontWeight: 400, lineHeight: '24px',
+              color: '#576579', textAlign: 'center',
+            }}>
+              Check any document and fix against any guidelines
+            </span>
           </div>
-        )}
 
-        <div
-          onDragOver={e => { e.preventDefault(); setDragging(true) }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={e => {
-            e.preventDefault()
-            setDragging(false)
-            const f = e.dataTransfer.files[0]
-            if (f) handleFileSelect(f)
-          }}
-        >
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".pptx,.docx"
-            style={{ display: 'none' }}
-            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f) }}
-          />
-          <button
-            onClick={() => auditFile ? handleRunAudit() : fileRef.current?.click()}
-            disabled={running}
-            style={{
-              background: dragging ? '#1e40af' : '#1d4ed8',
-              color: 'white',
-              border: 'none',
-              borderRadius: 8,
-              padding: '14px 48px',
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: running ? 'wait' : 'pointer',
-              minWidth: 260,
-              transition: 'background 0.15s',
-            }}
-          >
-            {running ? 'Running audit…' : auditFile ? 'Run compliance audit' : 'Upload document'}
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}>
+            {auditFile && !running && (
+              <span style={{ fontSize: 13, color: '#576579' }}>📄 {auditFile.name}</span>
+            )}
+            {runError && (
+              <pre style={{
+                color: '#DC0024', fontSize: 12, background: '#fef2f2',
+                border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px',
+                whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                maxHeight: 100, overflowY: 'auto', width: '100%', boxSizing: 'border-box',
+              }}>
+                {runError}
+              </pre>
+            )}
+
+            <div
+              onDragOver={e => { e.preventDefault(); setDragging(true) }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={e => {
+                e.preventDefault(); setDragging(false)
+                const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f)
+              }}
+            >
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".pptx,.docx"
+                style={{ display: 'none' }}
+                onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f) }}
+              />
+              <button
+                onClick={() => auditFile ? handleRunAudit() : fileRef.current?.click()}
+                disabled={running}
+                style={{
+                  background: dragging ? '#1557b0' : '#1A73E8',
+                  border: 'none', borderRadius: 8,
+                  padding: '12px 24px',
+                  fontSize: 16, fontWeight: 500, letterSpacing: '-0.02em',
+                  color: '#fff', cursor: running ? 'wait' : 'pointer',
+                  minWidth: 200, transition: 'background 0.15s',
+                }}
+              >
+                {running ? 'Running audit…' : auditFile ? 'Run compliance audit' : 'Upload document'}
+              </button>
+            </div>
+
+            <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
+              Supported formats: PPTX, DOCX
+            </span>
+          </div>
         </div>
       </div>
     )
   }
 
-  // ── Results screen ─────────────────────────────────────────────────────────
+  // ── Results screen ───────────────────────────────────────────────────────
   return (
     <div>
-      {/* Score banner */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 }}>
-          <div>
-            <Typography variant="b2" color="muted" style={{ marginBottom: 2 }}>
-              {auditFile?.name} · {profile?.brand_name}
-            </Typography>
-            <Typography variant="h4" weight="bold" style={{ color: scoreColor }}>
-              {score}% compliant
-            </Typography>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              onClick={() => {
-                dispatch({ type: 'SET_FIELD', field: 'auditResult', value: null })
-                dispatch({ type: 'RESET_FIXES' })
-                setAuditFile(null)
-              }}
-              style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 13, cursor: 'pointer', padding: '4px 8px' }}
-            >
-              ↺ Re-upload
-            </button>
-          </div>
+      {/* Progress bar section */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+
+        {/* Label + re-upload */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{
+            fontSize: 23, fontWeight: 700, lineHeight: '32px',
+            letterSpacing: '-0.01em', color: '#1E242C',
+          }}>
+            {score}% compliance
+          </span>
+          <button
+            onClick={() => {
+              dispatch({ type: 'SET_FIELD', field: 'auditResult', value: null })
+              dispatch({ type: 'RESET_FIXES' })
+              setAuditFile(null)
+            }}
+            style={{
+              background: 'none', border: 'none',
+              fontSize: 13, color: '#1A73E8', cursor: 'pointer', padding: 0,
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}
+          >
+            ↺ Upload new document
+          </button>
         </div>
 
-        {/* Score bar */}
-        <div style={{ height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${score}%`, background: scoreColor, transition: 'width 0.5s', borderRadius: 4 }} />
+        {/* Bar */}
+        <div style={{ position: 'relative', width: '100%', height: 8, background: '#F3F4F6', borderRadius: 8 }}>
+          <div style={{
+            position: 'absolute', left: 0, top: 0,
+            height: 8, width: `${score}%`,
+            background: '#DC0024', borderRadius: 8,
+            transition: 'width 0.5s',
+          }} />
         </div>
 
-        {/* Counts */}
-        <div style={{ display: 'flex', gap: 20, marginTop: 12 }}>
-          {[
-            { label: 'Hard violations', value: hardCount, color: '#ef4444' },
-            { label: 'Soft violations', value: softCount, color: '#f59e0b' },
-            { label: 'Elements checked', value: result.total_elements, color: '#6b7280' },
-            { label: 'Passing', value: result.passing_count, color: '#16a34a' },
-          ].map(m => (
-            <div key={m.label}>
-              <div style={{ fontSize: 20, fontWeight: 700, color: m.color }}>{m.value}</div>
-              <div style={{ fontSize: 12, color: '#9ca3af' }}>{m.label}</div>
-            </div>
-          ))}
+        {/* Stats */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {hardCount > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
+              {hardCount} hard violation{hardCount !== 1 ? 's' : ''}
+            </span>
+          )}
+          {hardCount > 0 && (softCount > 0 || infoCount > 0) && (
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488' }} />
+          )}
+          {softCount > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
+              {softCount} soft violation{softCount !== 1 ? 's' : ''}
+            </span>
+          )}
+          {softCount > 0 && infoCount > 0 && (
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488' }} />
+          )}
+          {infoCount > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
+              {infoCount} suggestion{infoCount !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Bulk actions */}
-      {fixableViolations.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center' }}>
-          <Button
-            buttonLabel="Fix all issues"
-            color="Blue"
-            type="Default"
-            size="Small"
-            onClick={() => dispatch({ type: 'FIX_ALL', ids: fixableViolations.map(v => v.id) })}
-          />
-          <Button
-            buttonLabel="Ignore all issues"
-            color="Blue"
-            type="Ghost"
-            size="Small"
-            onClick={() => dispatch({ type: 'IGNORE_ALL', ids: fixableViolations.map(v => v.id) })}
-          />
-          {Object.keys(state.fixDecisions).length > 0 && (
-            <Button
-              buttonLabel="Reset"
-              color="Blue"
-              type="Text"
-              size="Small"
-              onClick={() => dispatch({ type: 'RESET_FIXES' })}
-            />
-          )}
-          {fixCount > 0 && (
-            <div style={{ marginLeft: 'auto' }}>
-              <Button
-                buttonLabel={applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
-                color="Blue"
-                type="Default"
-                size="Medium"
-                state={applying ? 'Deactivated' : 'Normal'}
+      {/* Overview heading + bulk actions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <span style={{ fontSize: 16, fontWeight: 700, lineHeight: '24px', letterSpacing: '-0.02em', color: '#1E242C' }}>
+          Overview
+        </span>
+        {fixableViolations.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {fixCount > 0 && (
+              <button
                 onClick={handleApplyFixes}
-              />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Violation cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {violations.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <Typography variant="b2" color="muted">No violations found — document is fully compliant!</Typography>
+                disabled={applying}
+                style={{
+                  height: 32, padding: '8px 12px',
+                  background: '#1A73E8', border: 'none', borderRadius: 8,
+                  fontSize: 11, fontWeight: 500, color: '#fff',
+                  cursor: applying ? 'wait' : 'pointer',
+                }}
+              >
+                {applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
+              </button>
+            )}
+            <button
+              onClick={() => dispatch({ type: 'FIX_ALL', ids: fixableViolations.map(v => v.id) })}
+              style={{
+                height: 32, padding: '8px 12px',
+                background: '#E7EAEE', border: 'none', borderRadius: 8,
+                fontSize: 11, fontWeight: 500, color: '#1E242C', cursor: 'pointer',
+              }}
+            >
+              Fix all issues
+            </button>
+            <button
+              onClick={() => dispatch({ type: 'IGNORE_ALL', ids: fixableViolations.map(v => v.id) })}
+              style={{
+                height: 32, padding: '8px 12px',
+                background: 'transparent', border: '1px solid #DBDFE5', borderRadius: 8,
+                fontSize: 11, fontWeight: 500, color: '#576579', cursor: 'pointer',
+              }}
+            >
+              Ignore all issues
+            </button>
           </div>
-        ) : (
-          violations.map(v => (
+        )}
+      </div>
+
+      {/* Violation list */}
+      {violations.length === 0 ? (
+        <div style={{ padding: '48px 0', textAlign: 'center' }}>
+          <span style={{ fontSize: 16, color: '#26A568', fontWeight: 500 }}>
+            ✓ No violations found — document is fully compliant
+          </span>
+        </div>
+      ) : (
+        <div>
+          {violations.map(v => (
             <ViolationCard
               key={v.id}
               v={v}
@@ -426,21 +438,30 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
               onFix={() => dispatch({ type: 'SET_FIX_DECISION', id: v.id, decision: 'fix' })}
               onIgnore={() => dispatch({ type: 'SET_FIX_DECISION', id: v.id, decision: 'ignore' })}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* Bottom apply strip */}
+      {/* Sticky apply footer */}
       {fixCount > 0 && (
-        <div style={{ position: 'sticky', bottom: 0, background: 'white', borderTop: '1px solid #e5e7eb', padding: '16px 0', marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            buttonLabel={applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
-            color="Blue"
-            type="Default"
-            size="Large"
-            state={applying ? 'Deactivated' : 'Normal'}
+        <div style={{
+          position: 'sticky', bottom: 0,
+          background: '#fff', borderTop: '1px solid #DBDFE5',
+          padding: '16px 0', marginTop: 24,
+          display: 'flex', justifyContent: 'flex-end',
+        }}>
+          <button
             onClick={handleApplyFixes}
-          />
+            disabled={applying}
+            style={{
+              height: 48, padding: '12px 24px',
+              background: '#1A73E8', border: 'none', borderRadius: 8,
+              fontSize: 16, fontWeight: 500, letterSpacing: '-0.02em',
+              color: '#fff', cursor: applying ? 'wait' : 'pointer',
+            }}
+          >
+            {applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
+          </button>
         </div>
       )}
     </div>

@@ -8,8 +8,14 @@ import { Step4ReviewUpdate } from './views/wizard/Step4ReviewUpdate'
 function App() {
   const [state, dispatch] = useWizard()
 
+  function handleContinue() {
+    if (state.step === 1 && state.projectName.trim()) {
+      dispatch({ type: 'SET_STEP', step: 2 })
+    }
+  }
+
   return (
-    <WizardShell state={state} onCancel={() => dispatch({ type: 'RESET' })}>
+    <WizardShell state={state} onCancel={() => dispatch({ type: 'RESET' })} onContinue={handleContinue}>
       {state.step === 1 && <Step1Details state={state} dispatch={dispatch} />}
       {state.step === 2 && (
         <Step2AddGuidelines state={state} dispatch={dispatch} />

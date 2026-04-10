@@ -1,11 +1,33 @@
 import { useRef, useState } from 'react'
-import { Typography } from '../../components/Typography/Typography'
 import type { WizardState, WizardAction, BrandProfile } from '../../store/wizard'
 import { extractGuideline } from '../../api/client'
 
 interface Props {
   state: WizardState
   dispatch: React.Dispatch<WizardAction>
+}
+
+// Upload illustration SVG (240×240)
+function UploadIllustration() {
+  return (
+    <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Back document */}
+      <rect x="44" y="28" width="112" height="144" rx="6" fill="#E2E5E8"/>
+      {/* Mid document */}
+      <rect x="60" y="20" width="112" height="144" rx="6" fill="#E2E5E8"/>
+      {/* Front document */}
+      <rect x="76" y="12" width="112" height="144" rx="6" fill="#fff" stroke="#E2E5E8" strokeWidth="1.5"/>
+      {/* Document lines */}
+      <rect x="96" y="40" width="72" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="96" y="56" width="72" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="96" y="72" width="56" height="6" rx="3" fill="#E2E5E8"/>
+      <rect x="96" y="88" width="64" height="6" rx="3" fill="#E2E5E8"/>
+      {/* Upload circle */}
+      <circle cx="120" cy="182" r="46" fill="#24272B"/>
+      {/* Upload arrow */}
+      <path d="M120 162 L120 202 M106 175 L120 162 L134 175" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
 }
 
 export function Step2AddGuidelines({ state, dispatch }: Props) {
@@ -41,102 +63,107 @@ export function Step2AddGuidelines({ state, dispatch }: Props) {
     }
   }
 
+  const valueProps = [
+    'Enforce brand-approved fonts and styles',
+    'Maintain consistent typography across designs',
+    'Ensure visual consistency across teams and projects',
+  ]
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 520 }}>
-      {/* Upload illustration */}
-      <div style={{ marginBottom: 24 }}>
-        <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-          <rect x="28" y="8" width="52" height="64" rx="4" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="1.5"/>
-          <rect x="36" y="8" width="52" height="64" rx="4" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="1.5"/>
-          <rect x="44" y="8" width="52" height="64" rx="4" fill="white" stroke="#d1d5db" strokeWidth="1.5"/>
-          <line x1="54" y1="28" x2="86" y2="28" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="54" y1="38" x2="86" y2="38" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="54" y1="48" x2="76" y2="48" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round"/>
-          <circle cx="60" cy="88" r="22" fill="#1d4ed8"/>
-          <path d="M60 78 L60 98 M52 86 L60 78 L68 86" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <circle cx="60" cy="88" r="22" fill="none" stroke="#1e40af" strokeWidth="1"/>
-        </svg>
-      </div>
+    <div style={{
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      minHeight: '100%', padding: '32px 0',
+    }}>
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', gap: 32,
+        width: 629,
+      }}>
+        {/* Illustration */}
+        <UploadIllustration />
 
-      <Typography variant="h5" weight="bold" style={{ marginBottom: 10, textAlign: 'center' }}>
-        Set typography guidelines for this project
-      </Typography>
-      <Typography variant="b2" color="muted" style={{ marginBottom: 20, textAlign: 'center' }}>
-        Upload, create, or import guidelines to ensure consistent and compliant font usage.
-      </Typography>
+        {/* Text group */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, width: '100%' }}>
+          <span style={{
+            fontSize: 23, fontWeight: 700, lineHeight: '32px',
+            letterSpacing: '-0.01em', color: '#1E242C', textAlign: 'center',
+          }}>
+            Set typography guidelines for this project
+          </span>
 
-      {/* Value props */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 28 }}>
-        {[
-          'Enforce brand-approved fonts and styles',
-          'Maintain consistent typography across designs',
-          'Ensure visual consistency across teams and projects',
-        ].map(text => (
-          <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: '#16a34a', fontSize: 16 }}>✓</span>
-            <Typography variant="b2">{text}</Typography>
+          {/* Value props */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {valueProps.map(text => (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {/* Tick — #26A568 */}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8.5L6.5 12L13 5" stroke="#26A568" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span style={{ fontSize: 16, fontWeight: 400, lineHeight: '24px', color: '#576579' }}>
+                  {text}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* File shown if selected */}
-      {file && !extracting && (
-        <Typography variant="b2" color="muted" style={{ marginBottom: 12 }}>
-          📄 {file.name}
-        </Typography>
-      )}
+        {/* Upload zone */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}>
+          {file && !extracting && (
+            <span style={{ fontSize: 13, color: '#576579' }}>📄 {file.name}</span>
+          )}
 
-      {error && (
-        <pre style={{
-          color: '#dc2626', fontSize: 12, background: '#fef2f2',
-          border: '1px solid #fecaca', borderRadius: 6, padding: '8px 12px',
-          whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-          maxHeight: 120, overflowY: 'auto', marginBottom: 12, maxWidth: 520, width: '100%',
-        }}>
-          {error}
-        </pre>
-      )}
+          {error && (
+            <pre style={{
+              color: '#DC0024', fontSize: 12, background: '#fef2f2',
+              border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px',
+              whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+              maxHeight: 100, overflowY: 'auto', width: '100%', boxSizing: 'border-box',
+            }}>
+              {error}
+            </pre>
+          )}
 
-      {/* Upload zone / CTA */}
-      <Typography variant="m1" color="muted" style={{ marginBottom: 10 }}>
-        Upload/drag &amp; drop and scan a document. Supported formats: JSON, PDF, DOC, XLS
-      </Typography>
+          <div
+            onDragOver={e => { e.preventDefault(); setDragging(true) }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={e => {
+              e.preventDefault(); setDragging(false)
+              const f = e.dataTransfer.files[0]; if (f) handleFile(f)
+            }}
+          >
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.docx,.doc,.json,.xls,.xlsx,.png,.jpg,.jpeg"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
+              style={{ display: 'none' }}
+            />
+            <button
+              onClick={() => file ? handleUpload() : fileRef.current?.click()}
+              disabled={extracting}
+              style={{
+                background: dragging ? '#1557b0' : '#1A73E8',
+                border: 'none', borderRadius: 8,
+                padding: '12px 24px',
+                fontSize: 16, fontWeight: 500,
+                letterSpacing: '-0.02em', color: '#fff',
+                cursor: extracting ? 'wait' : 'pointer',
+                minWidth: 200,
+                transition: 'background 0.15s',
+              }}
+            >
+              {extracting ? 'Scanning document…' : file ? 'Scan document' : 'Upload document'}
+            </button>
+          </div>
 
-      <div
-        onDragOver={e => { e.preventDefault(); setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={e => {
-          e.preventDefault()
-          setDragging(false)
-          const f = e.dataTransfer.files[0]
-          if (f) handleFile(f)
-        }}
-      >
-        <input
-          ref={fileRef}
-          type="file"
-          accept=".pdf,.docx,.doc,.json,.xls,.xlsx,.png,.jpg,.jpeg"
-          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
-          style={{ display: 'none' }}
-        />
-        <button
-          onClick={() => file ? handleUpload() : fileRef.current?.click()}
-          disabled={extracting}
-          style={{
-            background: dragging ? '#1e40af' : '#1d4ed8',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '14px 48px',
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: extracting ? 'wait' : 'pointer',
-            minWidth: 260,
-            transition: 'background 0.15s',
-          }}
-        >
-          {extracting ? 'Scanning document…' : file ? 'Scan document' : 'Upload document'}
-        </button>
+          <span style={{
+            fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579', textAlign: 'center',
+          }}>
+            Upload/drag &amp; drop and scan a document. Supported formats: JSON, PDF, DOC, XLS
+          </span>
+        </div>
       </div>
     </div>
   )

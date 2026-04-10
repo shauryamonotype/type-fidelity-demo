@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { Typography } from '../../components/Typography/Typography'
-import { Button } from '../../components/Button/Button'
 import type { WizardState, WizardAction, FontRule, BrandProfile } from '../../store/wizard'
 
 interface Props {
@@ -9,10 +7,38 @@ interface Props {
   onReupload: () => void
 }
 
-const WEIGHTS = ['Thin', 'ExtraLight', 'Light', 'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black',
-  'Condensed Regular', 'Condensed Bold', 'Condensed Light', 'Display Regular', 'Display Bold']
-
+const WEIGHTS = [
+  '', 'Thin', 'ExtraLight', 'Light', 'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black',
+  'Condensed Regular', 'Condensed Bold', 'Condensed Light', 'Display Regular', 'Display Bold',
+]
 const CASINGS = ['', 'Sentence case', 'Title case', 'Uppercase', 'Lowercase', 'Small caps']
+
+const COL_HEADERS = ['Title', 'Family', 'Style', 'Size', 'Line height', 'Kerning', 'Additional details']
+
+function SortIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M8 3L10.5 6H5.5L8 3Z" fill="#667488"/>
+      <path d="M8 13L5.5 10H10.5L8 13Z" fill="#667488"/>
+    </svg>
+  )
+}
+
+function ColHeader({ label }: { label: string }) {
+  return (
+    <th style={{
+      padding: '8px 12px', textAlign: 'left',
+      fontFamily: 'inherit', fontWeight: 500, fontSize: 13,
+      lineHeight: '16px', color: '#576579',
+      whiteSpace: 'nowrap', userSelect: 'none',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        {label}
+        <SortIcon />
+      </div>
+    </th>
+  )
+}
 
 function EditableCell({
   value, onChange, type = 'text', options,
@@ -22,16 +48,17 @@ function EditableCell({
   type?: 'text' | 'select'
   options?: string[]
 }) {
+  const baseStyle: React.CSSProperties = {
+    border: '1px solid #DBDFE5', borderRadius: 6, padding: '4px 8px',
+    fontSize: 13, background: 'white', color: '#1E242C',
+    fontFamily: 'inherit', outline: 'none',
+  }
   if (type === 'select' && options) {
     return (
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        style={{
-          border: '1px solid #e5e7eb', borderRadius: 6, padding: '4px 8px',
-          fontSize: 13, background: 'white', color: '#111827', cursor: 'pointer',
-          minWidth: 100,
-        }}
+        style={{ ...baseStyle, cursor: 'pointer', minWidth: 100 }}
       >
         {options.map(o => <option key={o} value={o}>{o || '—'}</option>)}
       </select>
@@ -42,11 +69,7 @@ function EditableCell({
       type="text"
       value={value}
       onChange={e => onChange(e.target.value)}
-      style={{
-        border: '1px solid #e5e7eb', borderRadius: 6, padding: '4px 8px',
-        fontSize: 13, background: 'white', width: '100%', minWidth: 60,
-        color: '#111827',
-      }}
+      style={{ ...baseStyle, width: '100%', minWidth: 60 }}
     />
   )
 }
@@ -67,15 +90,9 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
   function toggleRow(i: number) {
     setSelected(prev => {
       const next = new Set(prev)
-      if (next.has(i)) next.delete(i)
-      else next.add(i)
+      next.has(i) ? next.delete(i) : next.add(i)
       return next
     })
-  }
-
-  function toggleAll() {
-    if (selected.size === fonts.length) setSelected(new Set())
-    else setSelected(new Set(fonts.map((_, i) => i)))
   }
 
   function handleConfirm() {
@@ -95,55 +112,75 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
     <div>
       {/* Re-upload link */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
-        <span style={{ color: '#2563eb', fontSize: 16 }}>↺</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 8C2 4.69 4.69 2 8 2C10.04 2 11.84 3.01 13 4.57V2.5" stroke="#1A73E8" strokeWidth="1.3" strokeLinecap="round"/>
+          <path d="M14 8C14 11.31 11.31 14 8 14" stroke="#1A73E8" strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
         <button
           onClick={onReupload}
-          style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 13, cursor: 'pointer', padding: 0 }}
+          style={{
+            background: 'none', border: 'none', padding: 0,
+            fontSize: 13, fontWeight: 400, lineHeight: '16px',
+            color: '#1A73E8', cursor: 'pointer',
+          }}
         >
           Re-upload guidelines
         </button>
       </div>
 
       {/* Font rules table */}
-      <div style={{ overflowX: 'auto', marginBottom: 32 }}>
+      <div style={{ overflowX: 'auto', marginBottom: 32, border: '1px solid #DBDFE5', borderRadius: 8 }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-              <th style={{ padding: '8px 10px', textAlign: 'left', width: 36 }}>
+            <tr style={{ borderBottom: '1px solid #DBDFE5', background: '#FAFAFA' }}>
+              <th style={{ padding: '8px 12px', width: 36 }}>
                 <input
                   type="checkbox"
                   checked={selected.size === fonts.length && fonts.length > 0}
-                  onChange={toggleAll}
+                  onChange={() => setSelected(
+                    selected.size === fonts.length ? new Set() : new Set(fonts.map((_, i) => i))
+                  )}
                 />
               </th>
-              {['Title', 'Family', 'Style', 'Size', 'Line height', 'Kerning', 'Additional details'].map(h => (
-                <th key={h} style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    {h} <span style={{ color: '#9ca3af', fontSize: 11 }}>↕</span>
-                  </div>
-                </th>
-              ))}
+              {COL_HEADERS.map(h => <ColHeader key={h} label={h} />)}
             </tr>
           </thead>
           <tbody>
+            {fonts.length === 0 && (
+              <tr>
+                <td colSpan={8} style={{ padding: '24px', textAlign: 'center', color: '#667488', fontSize: 13 }}>
+                  No font rules extracted
+                </td>
+              </tr>
+            )}
             {fonts.map((f, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: selected.has(i) ? '#eff6ff' : 'white' }}>
-                <td style={{ padding: '8px 10px' }}>
+              <tr
+                key={i}
+                style={{
+                  borderBottom: '1px solid #DBDFE5',
+                  background: selected.has(i) ? '#EBF3FD' : 'white',
+                }}
+              >
+                <td style={{ padding: '8px 12px' }}>
                   <input type="checkbox" checked={selected.has(i)} onChange={() => toggleRow(i)} />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
-                  <div style={{ fontWeight: 500, color: '#111827' }}>{f.font_name}</div>
-                  {f.usage && <div style={{ color: '#6b7280', fontSize: 12 }}>{f.usage}</div>}
+                {/* Title: font_name + usage */}
+                <td style={{ padding: '8px 12px', minWidth: 140 }}>
+                  <div style={{ fontWeight: 500, color: '#1E242C', fontSize: 13, lineHeight: '16px' }}>{f.font_name}</div>
+                  {f.usage && <div style={{ color: '#667488', fontSize: 11, marginTop: 2 }}>{f.usage}</div>}
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Family select */}
+                <td style={{ padding: '8px 12px', minWidth: 140 }}>
                   <EditableCell
                     value={f.font_name}
                     onChange={v => updateFont(i, 'font_name', v)}
                     type="select"
-                    options={['Avenir Next', 'Helvetica Now', 'Speedee', 'Mona Sans', f.font_name].filter((v, idx, arr) => arr.indexOf(v) === idx)}
+                    options={['Avenir Next', 'Helvetica Now', 'Speedee', 'Mona Sans', f.font_name]
+                      .filter((v, idx, arr) => arr.indexOf(v) === idx)}
                   />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Style / weight */}
+                <td style={{ padding: '8px 12px', minWidth: 120 }}>
                   <EditableCell
                     value={f.weight ?? ''}
                     onChange={v => updateFont(i, 'weight', v)}
@@ -151,16 +188,20 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
                     options={WEIGHTS}
                   />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Size */}
+                <td style={{ padding: '8px 12px', minWidth: 80 }}>
                   <EditableCell value={f.size ?? ''} onChange={v => updateFont(i, 'size', v)} />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Line height */}
+                <td style={{ padding: '8px 12px', minWidth: 80 }}>
                   <EditableCell value={f.line_height ?? ''} onChange={v => updateFont(i, 'line_height', v)} />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Kerning / letter spacing */}
+                <td style={{ padding: '8px 12px', minWidth: 80 }}>
                   <EditableCell value={f.letter_spacing ?? ''} onChange={v => updateFont(i, 'letter_spacing', v)} />
                 </td>
-                <td style={{ padding: '8px 10px' }}>
+                {/* Additional details / casing */}
+                <td style={{ padding: '8px 12px', minWidth: 120 }}>
                   <EditableCell
                     value={f.casing ?? ''}
                     onChange={v => updateFont(i, 'casing', v)}
@@ -177,15 +218,26 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
       {/* Don't rules */}
       {dontRules.length > 0 && (
         <div style={{ marginBottom: 24 }}>
-          <Typography variant="b2" weight="bold" style={{ marginBottom: 10 }}>Don&apos;t rules</Typography>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, lineHeight: '16px', color: '#1E242C', display: 'block', marginBottom: 10 }}>
+            Don&apos;t rules
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {dontRules.map((r, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ flexShrink: 0, color: '#dc2626', marginTop: 3 }}>🚫</span>
+              <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                  background: '#F8E4E4', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ fontSize: 10, color: '#C40020', fontWeight: 700 }}>✕</span>
+                </div>
                 <input
                   value={r}
                   onChange={e => setDontRules(prev => prev.map((x, idx) => idx === i ? e.target.value : x))}
-                  style={{ flex: 1, border: '1px solid #e5e7eb', borderRadius: 6, padding: '4px 8px', fontSize: 13 }}
+                  style={{
+                    flex: 1, border: '1px solid #DBDFE5', borderRadius: 6,
+                    padding: '6px 10px', fontSize: 13, fontFamily: 'inherit',
+                    color: '#1E242C', outline: 'none',
+                  }}
                 />
               </div>
             ))}
@@ -196,15 +248,26 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
       {/* General rules */}
       {generalRules.length > 0 && (
         <div style={{ marginBottom: 32 }}>
-          <Typography variant="b2" weight="bold" style={{ marginBottom: 10 }}>General rules</Typography>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, lineHeight: '16px', color: '#1E242C', display: 'block', marginBottom: 10 }}>
+            General rules
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {generalRules.map((r, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ flexShrink: 0, marginTop: 3 }}>📐</span>
+              <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                  background: '#E7EAEE', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ fontSize: 10, color: '#576579', fontWeight: 700 }}>i</span>
+                </div>
                 <input
                   value={r}
                   onChange={e => setGeneralRules(prev => prev.map((x, idx) => idx === i ? e.target.value : x))}
-                  style={{ flex: 1, border: '1px solid #e5e7eb', borderRadius: 6, padding: '4px 8px', fontSize: 13 }}
+                  style={{
+                    flex: 1, border: '1px solid #DBDFE5', borderRadius: 6,
+                    padding: '6px 10px', fontSize: 13, fontFamily: 'inherit',
+                    color: '#1E242C', outline: 'none',
+                  }}
                 />
               </div>
             ))}
@@ -214,11 +277,16 @@ export function Step3ConfirmGuidelines({ state, dispatch, onReupload }: Props) {
 
       {/* CTA */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          buttonLabel="Confirm and save"
-          color="Blue" type="Default" size="Large"
+        <button
           onClick={handleConfirm}
-        />
+          style={{
+            background: '#1A73E8', border: 'none', borderRadius: 8,
+            padding: '12px 24px', fontSize: 16, fontWeight: 500,
+            letterSpacing: '-0.02em', color: '#fff', cursor: 'pointer',
+          }}
+        >
+          Confirm and save
+        </button>
       </div>
     </div>
   )

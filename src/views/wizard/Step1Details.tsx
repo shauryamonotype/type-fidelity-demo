@@ -1,6 +1,3 @@
-import { Typography } from '../../components/Typography/Typography'
-import { Button } from '../../components/Button/Button'
-import { InputField } from '../../components/InputField/InputField'
 import type { WizardState, WizardAction } from '../../store/wizard'
 
 interface Props {
@@ -8,42 +5,70 @@ interface Props {
   dispatch: React.Dispatch<WizardAction>
 }
 
-export function Step1Details({ state, dispatch }: Props) {
-  const canContinue = state.projectName.trim().length > 0
-
+function FieldLabel({ text, required }: { text: string; required?: boolean }) {
   return (
-    <div>
-      <Typography variant="h5" weight="bold">Project details</Typography>
-      <Typography variant="b2" color="secondary" as="p" style={{ marginTop: 6, marginBottom: 24 }}>
-        Give your compliance project a name and optional description.
-      </Typography>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8 }}>
+      <span style={{ fontSize: 13, fontWeight: 500, lineHeight: '16px', color: '#1E242C' }}>{text}</span>
+      {required && <span style={{ fontSize: 13, fontWeight: 500, lineHeight: '16px', color: '#DC0024' }}>*</span>}
+    </div>
+  )
+}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 520 }}>
-        <InputField
-          label="Project name"
-          placeholder="e.g. Q3 Campaign Deck"
-          value={state.projectName}
-          onChange={v => dispatch({ type: 'SET_FIELD', field: 'projectName', value: v })}
-          size="Large"
-        />
-        <InputField
-          label="Description"
-          placeholder="Optional — what is this project about?"
-          value={state.projectDesc}
-          onChange={v => dispatch({ type: 'SET_FIELD', field: 'projectDesc', value: v })}
-          size="Large"
-        />
-      </div>
+const inputBase: React.CSSProperties = {
+  width: '100%',
+  boxSizing: 'border-box',
+  background: '#fff',
+  border: '1px solid #DBDFE5',
+  borderRadius: 8,
+  padding: '12px 16px',
+  fontSize: 13,
+  fontWeight: 400,
+  lineHeight: '16px',
+  color: '#1E242C',
+  fontFamily: 'inherit',
+  outline: 'none',
+}
 
-      <div className="nav-footer">
-        <Button
-          buttonLabel="Next"
-          color="Blue"
-          type="Default"
-          size="Large"
-          state={canContinue ? 'Normal' : 'Deactivated'}
-          onClick={() => canContinue && dispatch({ type: 'SET_STEP', step: 2 })}
-        />
+export function Step1Details({ state, dispatch }: Props) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Heading */}
+      <span style={{
+        fontSize: 19, fontWeight: 700, lineHeight: '32px',
+        letterSpacing: '-0.01em', color: '#1E242C',
+      }}>
+        Basic details
+      </span>
+
+      {/* Fields */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+        {/* Project name */}
+        <div>
+          <FieldLabel text="Project name" required />
+          <input
+            type="text"
+            placeholder="e.g. Brand redesign"
+            value={state.projectName}
+            onChange={e => dispatch({ type: 'SET_FIELD', field: 'projectName', value: e.target.value })}
+            style={{ ...inputBase, height: 40 }}
+            onFocus={e => { e.currentTarget.style.borderColor = '#1A73E8' }}
+            onBlur={e => { e.currentTarget.style.borderColor = '#DBDFE5' }}
+          />
+        </div>
+
+        {/* Project details */}
+        <div>
+          <FieldLabel text="Project details" required />
+          <textarea
+            placeholder="e.g. Brand redesign"
+            value={state.projectDesc}
+            onChange={e => dispatch({ type: 'SET_FIELD', field: 'projectDesc', value: e.target.value })}
+            style={{ ...inputBase, height: 355, resize: 'vertical', alignItems: 'flex-start' }}
+            onFocus={e => { e.currentTarget.style.borderColor = '#1A73E8' }}
+            onBlur={e => { e.currentTarget.style.borderColor = '#DBDFE5' }}
+          />
+        </div>
       </div>
     </div>
   )

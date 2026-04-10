@@ -40,7 +40,6 @@ html, body, #root {
 .wizard-content {
   flex: 1;
   padding: var(--space-8) var(--space-10);
-  max-width: 860px;
 }
 
 .step-item { display: flex; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-6); }
