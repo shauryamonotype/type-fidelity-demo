@@ -1,20 +1,28 @@
 import { useReducer } from 'react'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 export interface FontRule {
   font_name: string
   usage: string
   size?: string
+  line_height?: string
+  letter_spacing?: string
   weight?: string
   casing?: string
   font_guidelines?: string
+  fallback?: string
+  notes?: string
+}
+
+export interface DontRule {
+  rule: string
+  category?: string
+  severity?: string
 }
 
 export interface BrandProfile {
   brand_name: string
   fonts: FontRule[]
-  dont_rules: string[]
+  dont_rules: (string | DontRule)[]
   general_rules: string[]
 }
 
@@ -29,6 +37,7 @@ export interface ProfileSummary {
 export interface AuditViolation {
   id: number
   severity: 'hard' | 'soft' | 'info'
+  title?: string
   parameter: string
   actual_value: string
   expected_value: string
@@ -39,6 +48,10 @@ export interface AuditViolation {
   auto_fixable: boolean
   rule_source: string
   inferred_role: string
+  element_text?: string
+  element_size?: string
+  found?: string
+  fix?: string
 }
 
 export interface AuditResponse {
@@ -57,12 +70,12 @@ export interface AuditResponse {
 }
 
 export interface WizardState {
-  step: 1 | 2
+  step: 1 | 2 | 3 | 4
   view: 'wizard' | 'audit'
   // Step 1
   projectName: string
   projectDesc: string
-  // Step 2
+  // Step 2/3 — guideline
   guidelineMode: 'existing' | 'new'
   selectedProfile: BrandProfile | null
   selectedProfileSlug: string | null
@@ -73,7 +86,7 @@ export interface WizardState {
 }
 
 export type WizardAction =
-  | { type: 'SET_STEP'; step: 1 | 2 }
+  | { type: 'SET_STEP'; step: 1 | 2 | 3 | 4 }
   | { type: 'SET_VIEW'; view: 'wizard' | 'audit' }
   | { type: 'SET_FIELD'; field: keyof WizardState; value: unknown }
   | { type: 'SET_FIX_DECISION'; id: number; decision: 'fix' | 'ignore' }
@@ -97,12 +110,9 @@ export const INITIAL_STATE: WizardState = {
 
 function reducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
-    case 'SET_STEP':
-      return { ...state, step: action.step }
-    case 'SET_VIEW':
-      return { ...state, view: action.view }
-    case 'SET_FIELD':
-      return { ...state, [action.field]: action.value }
+    case 'SET_STEP': return { ...state, step: action.step }
+    case 'SET_VIEW': return { ...state, view: action.view }
+    case 'SET_FIELD': return { ...state, [action.field]: action.value }
     case 'SET_FIX_DECISION':
       return { ...state, fixDecisions: { ...state.fixDecisions, [action.id]: action.decision } }
     case 'FIX_ALL': {
@@ -115,12 +125,9 @@ function reducer(state: WizardState, action: WizardAction): WizardState {
       action.ids.forEach(id => { d[id] = 'ignore' })
       return { ...state, fixDecisions: d }
     }
-    case 'RESET_FIXES':
-      return { ...state, fixDecisions: {} }
-    case 'RESET':
-      return INITIAL_STATE
-    default:
-      return state
+    case 'RESET_FIXES': return { ...state, fixDecisions: {} }
+    case 'RESET': return INITIAL_STATE
+    default: return state
   }
 }
 
