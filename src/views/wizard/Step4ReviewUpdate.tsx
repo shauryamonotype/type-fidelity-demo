@@ -9,15 +9,14 @@ interface Props {
 
 const AUTO_FIX_PARAMS = new Set(['font_name', 'size', 'casing', 'letter_spacing', 'alignment'])
 
-// Document + lists illustration for screen 4
+// ── Illustrations ─────────────────────────────────────────────────────────────
+
 function ListsIllustration() {
   return (
-    <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Document stack */}
+    <svg width="240" height="240" viewBox="0 0 240 240" fill="none">
       <rect x="52" y="32" width="108" height="136" rx="6" fill="#E2E5E8"/>
       <rect x="64" y="22" width="108" height="136" rx="6" fill="#E2E5E8"/>
       <rect x="76" y="12" width="108" height="136" rx="6" fill="#fff" stroke="#E2E5E8" strokeWidth="1.5"/>
-      {/* List lines */}
       <rect x="92" y="38" width="12" height="6" rx="3" fill="#24272B"/>
       <rect x="110" y="38" width="56" height="6" rx="3" fill="#E2E5E8"/>
       <rect x="92" y="54" width="12" height="6" rx="3" fill="#24272B"/>
@@ -26,27 +25,32 @@ function ListsIllustration() {
       <rect x="110" y="70" width="60" height="6" rx="3" fill="#E2E5E8"/>
       <rect x="92" y="86" width="12" height="6" rx="3" fill="#24272B"/>
       <rect x="110" y="86" width="44" height="6" rx="3" fill="#E2E5E8"/>
-      {/* Upload circle */}
       <circle cx="120" cy="184" r="44" fill="#24272B"/>
-      {/* Arrow up */}
       <path d="M120 164 L120 204 M107 178 L120 164 L133 178" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
 
+// ── Violation card ────────────────────────────────────────────────────────────
+
 function SeverityBadge({ severity }: { severity: string }) {
   const isHard = severity === 'hard'
   const isSoft = severity === 'soft'
-  const bg = isHard ? '#F8E4E4' : isSoft ? '#FEF3C7' : '#E0F2FE'
-  const color = isHard ? '#C40020' : isSoft ? '#92400E' : '#0369A1'
-  const label = isHard ? 'HARD' : isSoft ? 'SOFT' : 'INFO'
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      padding: '2px 8px', gap: 3,
-      background: bg, border: `1px solid ${bg}`, borderRadius: 4,
+      padding: '2px 8px', gap: 3.2,
+      background: isHard ? '#F8E4E4' : isSoft ? '#FEF3C7' : '#E0F2FE',
+      border: `0.82px solid ${isHard ? '#F8E4E4' : isSoft ? '#FEF3C7' : '#E0F2FE'}`,
+      borderRadius: 4,
+      flexShrink: 0,
     }}>
-      <span style={{ fontSize: 9, fontWeight: 500, lineHeight: '16px', color }}>{label}</span>
+      <span style={{
+        fontSize: 9, fontWeight: 500, lineHeight: '16px',
+        color: isHard ? '#C40020' : isSoft ? '#92400E' : '#0369A1',
+      }}>
+        {isHard ? 'HARD' : isSoft ? 'SOFT' : 'INFO'}
+      </span>
     </div>
   )
 }
@@ -59,99 +63,111 @@ function ViolationCard({
   onFix: () => void
   onIgnore: () => void
 }) {
-  const ignored = decision === 'ignore'
   return (
     <div style={{
-      borderBottom: '1px solid #DBDFE5',
-      padding: '20px 0',
-      opacity: ignored ? 0.45 : 1,
+      display: 'flex', flexDirection: 'column', gap: 24,
+      padding: 24,
+      background: '#FFFFFF',
+      border: '1px solid #DBDFE5',
+      borderRadius: 16,
+      opacity: decision === 'ignore' ? 0.45 : 1,
       transition: 'opacity 0.15s',
+      boxSizing: 'border-box',
     }}>
-      {/* Title row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-        <span style={{ fontSize: 16, fontWeight: 500, lineHeight: '24px', letterSpacing: '-0.02em', color: '#1E242C', flex: 1 }}>
+      {/* Title row — 500.5px inner, flex-row, gap 16px */}
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+        <span style={{
+          flex: 1,
+          fontSize: 16, fontWeight: 500, lineHeight: '24px',
+          letterSpacing: '-0.02em', color: '#1E242C',
+        }}>
           {v.title ?? v.parameter.replace(/_/g, ' ')}
         </span>
         <SeverityBadge severity={v.severity} />
       </div>
 
-      {/* Metadata rows */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+      {/* Metadata — flex-col, gap 16px */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {v.text_preview && (
-          <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Issue with:</span>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 90, flexShrink: 0 }}>Issue with:</span>
             <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
-              &ldquo;{v.text_preview.slice(0, 80)}&rdquo;
-              {v.slide_number ? ` at slide ${v.slide_number}` : ''}
+              &ldquo;{v.text_preview.slice(0, 80)}&rdquo;{v.slide_number ? ` at slide ${v.slide_number}` : ''}
             </span>
           </div>
         )}
         {v.parameter && (
-          <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Reason:</span>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 90, flexShrink: 0 }}>Reason:</span>
             <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
               Incorrect {v.parameter.replace(/_/g, ' ')}
             </span>
           </div>
         )}
         {v.suggestion && (
-          <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 100 }}>Brand recommendation:</span>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579', minWidth: 90, flexShrink: 0 }}>Brand recommendation:</span>
             <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>{v.suggestion}</span>
           </div>
         )}
       </div>
 
       {/* Divider */}
-      <div style={{ borderBottom: '1px solid #DBDFE5', marginBottom: 12 }} />
+      <div style={{ borderBottom: '1px solid #DBDFE5' }} />
 
-      {/* FOUND → RECOMMENDED FIX */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 30, marginBottom: 16 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579', letterSpacing: '0.04em' }}>FOUND</span>
+      {/* FOUND → RECOMMENDED FIX — flex-row, justify-content: space-between, gap 30px */}
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 30 }}>
+        {/* FOUND — flex-col, gap 4px, 120px, align-items: flex-start */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4, width: 120 }}>
+          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>FOUND</span>
           <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#1E242C' }}>
             {v.actual_value || v.found || '—'}
           </span>
         </div>
 
-        {/* Arrow */}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        {/* Arrow — 24×24px, border: 1.3px solid #667488 */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
           <path d="M5 12H19M14 7L19 12L14 17" stroke="#667488" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579', letterSpacing: '0.04em' }}>RECOMMENDED FIX</span>
-          <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#1E242C' }}>
+        {/* RECOMMENDED FIX — flex-col, gap 4px, 168px, align-items: flex-end */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, width: 168 }}>
+          <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>RECOMMENDED FIX</span>
+          <span style={{ fontSize: 13, fontWeight: 400, lineHeight: '16px', color: '#1E242C', textAlign: 'right' }}>
             {v.expected_value || v.fix || '—'}
           </span>
         </div>
       </div>
 
-      {/* Buttons */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      {/* Divider */}
+      <div style={{ borderBottom: '1px solid #DBDFE5' }} />
+
+      {/* Buttons — flex-row, gap 8px, 186px total */}
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+        {/* Fix issue — 78×32px, #1A73E8, border-radius 8px, padding 8px 12px */}
         <button
           onClick={onFix}
           style={{
             width: 78, height: 32, padding: '8px 12px',
-            background: decision === 'fix' ? '#1A73E8' : '#E7EAEE',
+            background: decision === 'fix' ? '#155db2' : '#1A73E8',
             border: 'none', borderRadius: 8,
             fontSize: 11, fontWeight: 500, lineHeight: '16px',
-            color: decision === 'fix' ? '#fff' : '#1E242C',
-            cursor: 'pointer',
+            color: '#FFFFFF', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
           Fix issue
         </button>
+        {/* Ignore issue — 100×32px, outlined */}
         <button
           onClick={onIgnore}
           style={{
-            width: 90, height: 32, padding: '8px 12px',
-            background: decision === 'ignore' ? '#1E242C' : 'transparent',
-            border: `1px solid ${decision === 'ignore' ? '#1E242C' : '#DBDFE5'}`,
-            borderRadius: 8,
+            width: 100, height: 32, padding: '8px 12px',
+            background: decision === 'ignore' ? '#F3F4F6' : 'transparent',
+            border: '1px solid #DBDFE5', borderRadius: 8,
             fontSize: 11, fontWeight: 500, lineHeight: '16px',
-            color: decision === 'ignore' ? '#fff' : '#576579',
-            cursor: 'pointer',
+            color: '#576579', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
           Ignore issue
@@ -160,6 +176,8 @@ function ViolationCard({
     </div>
   )
 }
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 export function Step4ReviewUpdate({ state, dispatch }: Props) {
   const profile = state.selectedProfile
@@ -221,12 +239,12 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
   const violations = result?.violations ?? []
   const hardCount = violations.filter(v => v.severity === 'hard').length
   const softCount = violations.filter(v => v.severity === 'soft').length
-  const infoCount = violations.filter(v => v.severity === 'info').length
+  const infoCount  = violations.filter(v => v.severity === 'info').length
   const score = result?.compliance_score ?? 0
   const fixableViolations = violations.filter(v => v.auto_fixable || AUTO_FIX_PARAMS.has(v.parameter))
   const fixCount = Object.values(state.fixDecisions).filter(d => d === 'fix').length
 
-  // ── Upload screen ────────────────────────────────────────────────────────
+  // ── Screen 4: upload ───────────────────────────────────────────────────────
   if (!result) {
     return (
       <div style={{
@@ -234,10 +252,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
         alignItems: 'center', justifyContent: 'center',
         minHeight: '100%', padding: '32px 0',
       }}>
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', gap: 32, width: 629,
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, width: 629 }}>
           <ListsIllustration />
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
@@ -257,7 +272,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}>
             {auditFile && !running && (
-              <span style={{ fontSize: 13, color: '#576579' }}>📄 {auditFile.name}</span>
+              <span style={{ fontSize: 13, fontWeight: 400, color: '#576579' }}>📄 {auditFile.name}</span>
             )}
             {runError && (
               <pre style={{
@@ -269,20 +284,13 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
                 {runError}
               </pre>
             )}
-
             <div
               onDragOver={e => { e.preventDefault(); setDragging(true) }}
               onDragLeave={() => setDragging(false)}
-              onDrop={e => {
-                e.preventDefault(); setDragging(false)
-                const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f)
-              }}
+              onDrop={e => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f) }}
             >
               <input
-                ref={fileRef}
-                type="file"
-                accept=".pptx,.docx"
-                style={{ display: 'none' }}
+                ref={fileRef} type="file" accept=".pptx,.docx" style={{ display: 'none' }}
                 onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f) }}
               />
               <button
@@ -290,8 +298,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
                 disabled={running}
                 style={{
                   background: dragging ? '#1557b0' : '#1A73E8',
-                  border: 'none', borderRadius: 8,
-                  padding: '12px 24px',
+                  border: 'none', borderRadius: 8, padding: '12px 24px',
                   fontSize: 16, fontWeight: 500, letterSpacing: '-0.02em',
                   color: '#fff', cursor: running ? 'wait' : 'pointer',
                   minWidth: 200, transition: 'background 0.15s',
@@ -300,9 +307,8 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
                 {running ? 'Running audit…' : auditFile ? 'Run compliance audit' : 'Upload document'}
               </button>
             </div>
-
             <span style={{ fontSize: 9, fontWeight: 400, lineHeight: '16px', color: '#576579' }}>
-              Supported formats: PPTX, DOCX
+              Upload/drag &amp; drop and scan a document. Supported formats: JSON, PDF, DOC, XLS
             </span>
           </div>
         </div>
@@ -310,13 +316,14 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
     )
   }
 
-  // ── Results screen ───────────────────────────────────────────────────────
+  // ── Screen 5: results ──────────────────────────────────────────────────────
   return (
-    <div>
-      {/* Progress bar section */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* Label + re-upload */}
+      {/* Progress bar section — flex-col, gap 16px, width 1065px */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+        {/* Score heading + upload-new link */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{
             fontSize: 23, fontWeight: 700, lineHeight: '32px',
@@ -331,26 +338,30 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
               setAuditFile(null)
             }}
             style={{
-              background: 'none', border: 'none',
-              fontSize: 13, color: '#1A73E8', cursor: 'pointer', padding: 0,
-              display: 'flex', alignItems: 'center', gap: 4,
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 6,
             }}
           >
-            ↺ Upload new document
+            {/* Circular arrow icon — Vector border: 1.3px solid #1A73E8 */}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M13 8A5 5 0 1 1 8 3M8 3L10.5 1M8 3L10.5 5" stroke="#1A73E8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{ fontSize: 13, fontWeight: 500, lineHeight: '16px', color: '#1A73E8' }}>
+              Upload new document
+            </span>
           </button>
         </div>
 
-        {/* Bar */}
+        {/* Progress bar — Rectangle 1: #F3F4F6, 8px, r8; Rectangle 2: #DC0024 */}
         <div style={{ position: 'relative', width: '100%', height: 8, background: '#F3F4F6', borderRadius: 8 }}>
           <div style={{
-            position: 'absolute', left: 0, top: 0,
-            height: 8, width: `${score}%`,
-            background: '#DC0024', borderRadius: 8,
-            transition: 'width 0.5s',
+            position: 'absolute', left: 0, top: 0, height: 8,
+            width: `${score}%`, background: '#DC0024', borderRadius: 8,
+            transition: 'width 0.6s',
           }} />
         </div>
 
-        {/* Stats */}
+        {/* Stats row — M1/Medium 11px, dots 4×4px #667488 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {hardCount > 0 && (
             <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
@@ -358,7 +369,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
             </span>
           )}
           {hardCount > 0 && (softCount > 0 || infoCount > 0) && (
-            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488' }} />
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488', flexShrink: 0 }} />
           )}
           {softCount > 0 && (
             <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
@@ -366,7 +377,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
             </span>
           )}
           {softCount > 0 && infoCount > 0 && (
-            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488' }} />
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#667488', flexShrink: 0 }} />
           )}
           {infoCount > 0 && (
             <span style={{ fontSize: 11, fontWeight: 500, lineHeight: '16px', color: '#576579' }}>
@@ -376,33 +387,19 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
         </div>
       </div>
 
-      {/* Overview heading + bulk actions */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 16, fontWeight: 700, lineHeight: '24px', letterSpacing: '-0.02em', color: '#1E242C' }}>
+      {/* Overview header + bulk actions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 16, fontWeight: 500, lineHeight: '24px', letterSpacing: '-0.02em', color: '#1E242C' }}>
           Overview
         </span>
         {fixableViolations.length > 0 && (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {fixCount > 0 && (
-              <button
-                onClick={handleApplyFixes}
-                disabled={applying}
-                style={{
-                  height: 32, padding: '8px 12px',
-                  background: '#1A73E8', border: 'none', borderRadius: 8,
-                  fontSize: 11, fontWeight: 500, color: '#fff',
-                  cursor: applying ? 'wait' : 'pointer',
-                }}
-              >
-                {applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
-              </button>
-            )}
+          <div style={{ display: 'flex', gap: 8 }}>
             <button
               onClick={() => dispatch({ type: 'FIX_ALL', ids: fixableViolations.map(v => v.id) })}
               style={{
-                height: 32, padding: '8px 12px',
-                background: '#E7EAEE', border: 'none', borderRadius: 8,
-                fontSize: 11, fontWeight: 500, color: '#1E242C', cursor: 'pointer',
+                height: 32, padding: '8px 12px', background: '#1A73E8',
+                border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 500,
+                color: '#fff', cursor: 'pointer',
               }}
             >
               Fix all issues
@@ -410,26 +407,44 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
             <button
               onClick={() => dispatch({ type: 'IGNORE_ALL', ids: fixableViolations.map(v => v.id) })}
               style={{
-                height: 32, padding: '8px 12px',
-                background: 'transparent', border: '1px solid #DBDFE5', borderRadius: 8,
-                fontSize: 11, fontWeight: 500, color: '#576579', cursor: 'pointer',
+                height: 32, padding: '8px 12px', background: 'transparent',
+                border: '1px solid #DBDFE5', borderRadius: 8, fontSize: 11, fontWeight: 500,
+                color: '#576579', cursor: 'pointer',
               }}
             >
               Ignore all issues
             </button>
+            {fixCount > 0 && (
+              <button
+                onClick={handleApplyFixes}
+                disabled={applying}
+                style={{
+                  height: 32, padding: '8px 12px', background: '#26A568',
+                  border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 500,
+                  color: '#fff', cursor: applying ? 'wait' : 'pointer',
+                }}
+              >
+                {applying ? 'Applying…' : `Apply ${fixCount} fix${fixCount > 1 ? 'es' : ''} & download`}
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      {/* Violation list */}
+      {/* 2-column card grid — gap 16px */}
       {violations.length === 0 ? (
-        <div style={{ padding: '48px 0', textAlign: 'center' }}>
+        <div style={{ gridColumn: '1/-1', padding: '48px 0', textAlign: 'center' }}>
           <span style={{ fontSize: 16, color: '#26A568', fontWeight: 500 }}>
             ✓ No violations found — document is fully compliant
           </span>
         </div>
       ) : (
-        <div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 16,
+          alignItems: 'flex-start',
+        }}>
           {violations.map(v => (
             <ViolationCard
               key={v.id}
@@ -447,7 +462,7 @@ export function Step4ReviewUpdate({ state, dispatch }: Props) {
         <div style={{
           position: 'sticky', bottom: 0,
           background: '#fff', borderTop: '1px solid #DBDFE5',
-          padding: '16px 0', marginTop: 24,
+          padding: '16px 0', marginTop: 8,
           display: 'flex', justifyContent: 'flex-end',
         }}>
           <button

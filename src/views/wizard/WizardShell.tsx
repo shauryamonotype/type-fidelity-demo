@@ -109,7 +109,7 @@ export function WizardShell({ state, onCancel, onContinue, children }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 16, width: '100%' }}>
                   <div style={{
                     width: 24, height: 24, borderRadius: '50%', flexShrink: 0,
-                    background: isActive || isComplete ? '#1E242C' : '#E7EAEE',
+                    background: isActive ? '#1E242C' : isComplete ? '#26A568' : '#E7EAEE',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <span style={{
